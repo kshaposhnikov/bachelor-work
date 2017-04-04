@@ -10,16 +10,39 @@
 <html>
 <head>
     <c:url var="home" value="/" scope="request" />
-    <script type="text/javascript" src="${pageContext.request.contextPath}/resource/js/jquery-3.2.0.min.js"></script>
-    <title>Title</title>
-</head>
-<body>
-    <p>Face Recognition Service</p>
 
-    <div id="playerWindow">
-        <canvas id="liveVideo" width="640" height="480" style="display: inline"></canvas>
-        <button id="startStream" type="button" onclick="streamControl('start')">Start</button>
-        <button id="stopStream" type="button" onclick="streamControl('stop')">Stop</button>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/resource/js/jquery-3.2.0.min.js"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/resource/js/materialize.min.js"></script>
+
+    <link type="text/css" href="${pageContext.request.contextPath}/resource/css/materialize.min.css" rel="stylesheet">
+    <link type="text/css" href="${pageContext.request.contextPath}/resource/css/sface.css" rel="stylesheet">
+
+    <title>SFace</title>
+
+    <nav>
+        <div class="nav-wrapper">
+            <a href="#" class="brand-logo">SFace</a>
+            <ul class="right hide-on-med-and-down">
+                <li><a>Login</a></li>
+            </ul>
+        </div>
+    </nav>
+
+</head>
+
+<body>
+    <div id="root">
+        <div id="player-window" class="player">
+            <div id="video-show">
+                <%--<canvas id="liveVideo" width="640" height="480" style="display: inline">--%>
+                <img src="${pageContext.request.contextPath}/resource/img/test.png" width="640" height="480" alt="test"/>
+                <%--</canvas>--%>
+            </div>
+            <div id="control-panel" class="control-panel">
+                <a class="waves-effect waves-light btn" id="startStream" onclick="streamControl('start')">Start</a>
+                <a class="waves-effect waves-light btn" id="stopStream" onclick="streamControl('stop')">Stop</a>
+            </div>
+        </div>
     </div>
 
     <script type="text/javascript">
