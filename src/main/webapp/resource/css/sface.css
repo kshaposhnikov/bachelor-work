@@ -1,9 +1,65 @@
-.player {
-    margin: 20px auto auto 20px;
+.root {
+    /*margin: auto auto auto auto;*/
+    background-color: #e0f2f1;
+    height: 100%;
+}
+
+.center-block {
     width: 50%;
+    margin-left: 10px;
+    margin-top: 20px;
+    display: inline-block;
 }
 
 .control-panel {
     margin: 5px auto;
     width: 50%;
+}
+
+.camera-list {
+    float: left;
+    width: 10%;
+    height: auto;
+    display: inline-block;
+    margin-left: 5px;
+}
+
+#camera-list-title {
+    font-family: Roboto-Medium;
+    font-size: large;
+}
+
+@font-face {
+    font-family: Roboto-Bold;
+    src: url('../fonts/roboto/Roboto-Bold.ttf') format('truetype');
+    src: url('../fonts/roboto/Roboto-Bold.woff') format('woff');
+    src: url('../fonts/roboto/Roboto-Bold.woff2') format('woff2');
+}
+
+@font-face {
+    font-family: Roboto-Light;
+    src: url('../fonts/roboto/Roboto-Light.ttf') format('truetype');
+    src: url('../fonts/roboto/Roboto-Light.woff') format('woff');
+    src: url('../fonts/roboto/Roboto-Light.woff2') format('woff2');
+}
+
+@font-face {
+    font-family: Roboto-Medium;
+    src: url('../fonts/roboto/Roboto-Medium.ttf') format('truetype');
+    src: url('../fonts/roboto/Roboto-Medium.woff') format('woff');
+    src: url('../fonts/roboto/Roboto-Medium.woff2') format('woff2');
+}
+
+@font-face {
+    font-family: Roboto-Regular;
+    src: url('../fonts/roboto/Roboto-Regular.ttf') format('truetype');
+    src: url('../fonts/roboto/Roboto-Regular.woff') format('woff');
+    src: url('../fonts/roboto/Roboto-Regular.woff2') format('woff2');
+}
+
+@font-face {
+    font-family: Roboto-Thin;
+    src: url('../fonts/roboto/Roboto-Thin.ttf') format('truetype');
+    src: url('../fonts/roboto/Roboto-Thin.woff') format('woff');
+    src: url('../fonts/roboto/Roboto-Thin.woff2') format('woff2');
 }

@@ -10,10 +10,20 @@ import org.springframework.web.bind.annotation.RequestMethod;
  */
 
 @Controller
-public class MainPageController {
+public class ServicePageController {
 
     @RequestMapping(value={"/","/main"}, method = RequestMethod.GET)
     public String getHomePage(ModelMap model) {
         return "main";
+    }
+
+    @RequestMapping(value="/video", method = RequestMethod.GET)
+    public String getVideoPage() {
+        return "video";
+    }
+
+    @RequestMapping(value="/image", method = RequestMethod.GET)
+    public String getImagePage() {
+        return "image";
     }
 }
