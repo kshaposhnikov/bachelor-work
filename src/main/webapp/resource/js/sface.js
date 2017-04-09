@@ -1,11 +1,11 @@
-var timer = 0;
+var timerCount = 0;
 
 function streamControl(mode) {
     if (mode == 'start') {
         var liveVideoCanvas = $("#liveVideo");
         var ctx = liveVideoCanvas.get()[0].getContext('2d');
 
-        timer = setInterval(function () {
+        timerCount = setInterval(function () {
             $.ajax({
                 type: "GET",
                 url: "${home}/webcam/stream/123",
@@ -17,9 +17,21 @@ function streamControl(mode) {
             });
         }, 30);
     } else if (mode == 'stop'){
-        for (var interval = 1; interval <= timer; interval++) {
+        for (var interval = 1; interval <= timerCount; interval++) {
             clearInterval(interval);
         }
-        timer = 0;
+        timerCount = 0;
     }
+}
+
+function closeNewCameraPopup() {
+    $('#new-camera-popup').hide();
+}
+
+function showNewCameraPopup() {
+    $('#new-camera-popup').show();
+}
+
+function onLoadNewCameraPopup() {
+    alert("test");
 }

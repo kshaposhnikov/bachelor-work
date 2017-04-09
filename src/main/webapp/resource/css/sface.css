@@ -1,19 +1,27 @@
 .root {
-    /*margin: auto auto auto auto;*/
     background-color: #e0f2f1;
     height: 100%;
 }
 
-.center-block {
+.sface-center-block {
     width: 50%;
     margin-left: 10px;
     margin-top: 20px;
     display: inline-block;
 }
 
+.player {
+    position: absolute;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, 0);
+}
+
 .control-panel {
     margin: 5px auto;
-    width: 50%;
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, 0);
 }
 
 .camera-list {
@@ -24,9 +32,40 @@
     margin-left: 5px;
 }
 
+.recognized-list {
+    float: right;
+    width: 10%;
+    height: auto;
+    display: inline-block;
+    margin-right: 5px;
+}
+
+.select-camera {
+    position: absolute;
+    background-color: white;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.45);
+    min-height: 100px;
+    min-width: 120px;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, 50%);
+    display: none;
+}
+
 #camera-list-title {
     font-family: Roboto-Medium;
     font-size: large;
+}
+
+#recognized-faces-title {
+    text-align: right;
+    font-family: Roboto-Medium;
+    font-size: large;
+}
+
+#fab_video {
+    position: absolute;
+    transform: translate(-50%, 60%);
 }
 
 @font-face {

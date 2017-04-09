@@ -38,8 +38,8 @@
                 <p id="camera-list-title">Activities</p>
             </div>
 
-            <div id="sface-cente-block" class="center-block">
-                <div id="player-window">
+            <div id="sface-cente-block" class="sface-center-block">
+                <div id="player-window" class="player">
                     <div id="video-show">
                         <%--<canvas id="liveVideo" width="640" height="480" style="display: inline">--%>
                         <img src="${pageContext.request.contextPath}/resource/img/test.png" width="640" height="480" alt="test"/>
@@ -50,9 +50,21 @@
                         <a class="waves-effect waves-light btn" id="stopStream" onclick="streamControl('stop')">Stop</a>
                     </div>
                 </div>
+
+                <div class="fixed-action-btn">
+                    <a class="btn-floating btn-large waves-effect waves-light red accent-4" onclick="showNewCameraPopup()">
+                        <img id="fab_video" class="material-icons" src="${pageContext.request.contextPath}/resource/img/ic_add_white.png">
+                    </a>
+                </div>
             </div>
 
-            <div id="recognized-faces">
+            <div id="recognized-faces" class="recognized-list">
+                <p id="recognized-faces-title">Recognized</p>
+            </div>
+
+            <div id="new-camera-popup" class="select-camera">
+                <input onload="onLoadNewCameraPopup()"/>
+                <a class="waves-effect waves-light btn" onclick="closeNewCameraPopup()">OK</a>
             </div>
         </div>
     </body>
