@@ -63,7 +63,7 @@
             </div>
 
             <div id="new-camera-popup" class="select-camera">
-                <input onload="onLoadNewCameraPopup()"/>
+                <input/>
                 <a class="waves-effect waves-light btn" onclick="closeNewCameraPopup()">OK</a>
             </div>
         </div>
