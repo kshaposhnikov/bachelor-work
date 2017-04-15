@@ -5,6 +5,8 @@ package com.shaposhnikov.facerecognizer.controller;
 
 import com.github.sarxos.webcam.util.ImageUtils;
 import com.shaposhnikov.facerecognizer.command.DetectAndRecognizeFaceCommand;
+import com.shaposhnikov.facerecognizer.data.Camera;
+import com.shaposhnikov.facerecognizer.data.CameraRepository;
 import com.shaposhnikov.facerecognizer.detector.HaarFaceDetector;
 import com.shaposhnikov.facerecognizer.grabber.WebCamGrabber;
 import com.shaposhnikov.facerecognizer.grabber.WebCamGrabberNew;
@@ -18,6 +20,7 @@ import org.opencv.core.Mat;
 //import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,6 +33,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Base64;
+import java.util.List;
 
 @Controller
 @RequestMapping(value = "/webcam")
@@ -40,6 +44,9 @@ public class IpWebCamController {
     static {
         NativeLoader.getInstance().load(Core.NATIVE_LIBRARY_NAME);
     }
+
+    @Autowired
+    public CameraRepository cameraRepository;
 
     @ResponseBody
     @RequestMapping(value="/stream/{camId}", method = RequestMethod.GET)
@@ -70,6 +77,12 @@ public class IpWebCamController {
             LOG.error("Request failed", e);
             throw new RuntimeException("Request failed", e);
         }
+    }
+
+    @RequestMapping(value = "/getCameras", method = RequestMethod.GET)
+    public @ResponseBody List<Camera> getCameras() {
+        List<Camera> cameras = cameraRepository.findAll();
+        return cameras;
     }
 
     @RequestMapping(value = "/stop/{camId}", method = RequestMethod.POST)

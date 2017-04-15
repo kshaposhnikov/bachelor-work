@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class ServicePageController {
 
     @RequestMapping(value={"/","/main"}, method = RequestMethod.GET)
-    public String getHomePage(ModelMap model) {
+    public String getHomePage() {
         return "main";
     }
 
