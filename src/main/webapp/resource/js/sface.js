@@ -12,7 +12,6 @@ function streamControl(mode) {
                 type: "GET",
                 url: "/face-recognizer-service/webcam/stream/123",
                 success: function (rawImage) {
-                    //var frame = new Image();
                     frame.src = 'data:image/png;base64,' + rawImage;
                     ctx.drawImage(frame, 0, 0, 640, 480);
                 }
