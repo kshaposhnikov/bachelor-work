@@ -41,9 +41,12 @@
             <div id="sface-cente-block" class="sface-center-block">
                 <div id="player-window" class="player">
                     <div id="video-show">
-                        <%--<canvas id="liveVideo" width="640" height="480" style="display: inline">--%>
-                        <img src="${pageContext.request.contextPath}/resource/img/test.png" width="640" height="480" alt="test"/>
-                        <%--</canvas>--%>
+                        <div style="display: none">
+                            <canvas id="liveVideo" width="640" height="480" style="display: inline">
+                            </canvas>
+                        </div>
+                        <img id="frame" width="640" height="480"/>
+
                     </div>
                     <div id="control-panel" class="control-panel">
                         <a class="waves-effect waves-light btn" id="startStream" onclick="streamControl('start')">Start</a>

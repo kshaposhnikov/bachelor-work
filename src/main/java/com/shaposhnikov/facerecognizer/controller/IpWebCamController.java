@@ -5,6 +5,7 @@ package com.shaposhnikov.facerecognizer.controller;
 
 import com.github.sarxos.webcam.util.ImageUtils;
 import com.shaposhnikov.facerecognizer.command.DetectAndRecognizeFaceCommand;
+import com.shaposhnikov.facerecognizer.command.OutputImageCommand;
 import com.shaposhnikov.facerecognizer.data.Camera;
 import com.shaposhnikov.facerecognizer.data.CameraRepository;
 import com.shaposhnikov.facerecognizer.detector.HaarFaceDetector;
@@ -48,9 +49,8 @@ public class IpWebCamController {
     @Autowired
     public CameraRepository cameraRepository;
 
-    @ResponseBody
     @RequestMapping(value="/stream/{camId}", method = RequestMethod.GET)
-    public byte[] getStream(@PathVariable String camId) throws IOException {
+    public @ResponseBody byte[] getStream(@PathVariable String camId) throws IOException {
         try {
             RecognizeContext context;
             if (CamCache.CONTEXT_CACHE.containsKey(camId)) {
@@ -99,8 +99,8 @@ public class IpWebCamController {
         FisherFaceRecognizer recognizer = new FisherFaceRecognizer();
         //LBPHFaceRecognizer recognizer = new LBPHFaceRecognizer();
         recognizer.load("C:/tmp/result/resultFisher.yml");
-        DetectAndRecognizeFaceCommand command = new DetectAndRecognizeFaceCommand(detector, recognizer);
-        //OutputImageCommand command = new OutputImageCommand();
+        //DetectAndRecognizeFaceCommand command = new DetectAndRecognizeFaceCommand(detector, recognizer);
+        OutputImageCommand command = new OutputImageCommand();
         RecognizeContext context = new RecognizeContext(
                 //new IpWebCamGrabber(command, camId, "http://192.168.1.244:8080/video"),
                 new WebCamGrabberNew(),
