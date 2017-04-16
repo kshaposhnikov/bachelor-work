@@ -49,8 +49,8 @@
 
                     </div>
                     <div id="control-panel" class="control-panel">
-                        <a class="waves-effect waves-light btn" id="startStream" onclick="streamControl('start')">Start</a>
-                        <a class="waves-effect waves-light btn" id="stopStream" onclick="streamControl('stop')">Stop</a>
+                        <a class="waves-effect waves-light btn" id="startStream" onclick="startStream()">Start</a>
+                        <a class="waves-effect waves-light btn" id="stopStream" onclick="stopStream()">Stop</a>
                     </div>
                 </div>
 

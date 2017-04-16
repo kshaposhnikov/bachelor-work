@@ -89,8 +89,7 @@ public class IpWebCamController {
     public void stopStream(@PathVariable String camId) {
         if (CamCache.CONTEXT_CACHE.containsKey(camId)) {
             RecognizeContext recognizeContext = CamCache.CONTEXT_CACHE.get(camId);
-        } else {
-
+            recognizeContext.getGrabber().stop();
         }
     }
 
