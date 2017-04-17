@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%--
   Created by IntelliJ IDEA.
   User: Kirill
@@ -8,7 +9,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
     <head>
-        <c:url var="home" value="/" scope="request" />
+        <!--<c:url var="home" value="/" scope="request" />-->
 
         <script type="text/javascript" src="${pageContext.request.contextPath}/resource/js/jquery-3.2.0.min.js"></script>
         <script type="text/javascript" src="${pageContext.request.contextPath}/resource/js/materialize.min.js"></script>
@@ -34,7 +35,7 @@
                 </div>
             </nav>
 
-            <div id="camera-list" class="camera-list">
+            <div id="active-camera-list" class="active-camera-list-style">
                 <p id="camera-list-title">Activities</p>
             </div>
 
@@ -66,7 +67,11 @@
             </div>
 
             <div id="new-camera-popup" class="select-camera">
-                <input/>
+                <form>
+                    <select title="Name" id="available-cameras" size="5">
+                        <option value="Default">Default</option>
+                    </select>
+                </form>
                 <a class="waves-effect waves-light btn" onclick="closeNewCameraPopup()">OK</a>
             </div>
         </div>

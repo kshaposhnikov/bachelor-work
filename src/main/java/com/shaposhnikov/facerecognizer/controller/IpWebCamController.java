@@ -79,18 +79,18 @@ public class IpWebCamController {
         }
     }
 
-    @RequestMapping(value = "/getCameras", method = RequestMethod.GET)
-    public @ResponseBody List<Camera> getCameras() {
-        List<Camera> cameras = cameraRepository.findAll();
-        return cameras;
-    }
-
     @RequestMapping(value = "/stop/{camId}", method = RequestMethod.POST)
     public void stopStream(@PathVariable String camId) {
         if (CamCache.CONTEXT_CACHE.containsKey(camId)) {
             RecognizeContext recognizeContext = CamCache.CONTEXT_CACHE.get(camId);
             recognizeContext.getGrabber().stop();
         }
+    }
+
+    @RequestMapping(value = "/getCameras", method = RequestMethod.GET)
+    public @ResponseBody List<Camera> getCameras() {
+        List<Camera> cameras = cameraRepository.findAll();
+        return cameras;
     }
 
     private synchronized RecognizeContext createContext(String camId) throws MalformedURLException {
