@@ -3,9 +3,10 @@
  */
 package com.shaposhnikov.facerecognizer.util;
 
+import java.io.File;
 import java.io.IOException;
-import java.util.Properties;
-import java.util.StringJoiner;
+import java.lang.reflect.Field;
+import java.util.*;
 
 public class NativeLoader {
 
@@ -27,15 +28,45 @@ public class NativeLoader {
 
     public void load(String name) {
         try {
-            Properties properties = new Properties();
-            properties.load(getClass().getResourceAsStream("config.properties"));
+            Map<String, Boolean> nativeLibraryStatuses = new HashMap<>();
 
-            System.load(properties.getProperty(buildPathProperty()) +
-                            name +
-                            properties.getProperty(buildExtenstionProperty())
-            );
+            ClassLoader parent = this.getClass().getClassLoader().getParent();
+            Field nativeLibraries = ClassLoader.class.getDeclaredField("nativeLibraries");
+            nativeLibraries.setAccessible(true);
+
+            Vector<Object> libraries = (Vector<Object>) nativeLibraries.get(parent);
+            for (Object item : libraries) {
+                Field loadedLibraryName = item.getClass().getDeclaredField("name");
+                loadedLibraryName.setAccessible(true);
+
+                Field loadedLibraryStatus = item.getClass().getDeclaredField("loaded");
+                loadedLibraryStatus.setAccessible(true);
+
+                String loadedLibraryNameValue = (String) loadedLibraryName.get(item);
+                Boolean loadedLibraryStatusValue = loadedLibraryStatus.getBoolean(item);
+
+                loadedLibraryNameValue = loadedLibraryNameValue.substring(
+                        loadedLibraryNameValue.lastIndexOf(File.separatorChar) + 1,
+                        loadedLibraryNameValue.lastIndexOf(".dll"));
+
+                nativeLibraryStatuses.put(loadedLibraryNameValue, loadedLibraryStatusValue);
+            }
+
+            if (!nativeLibraryStatuses.containsKey(name)) {
+                Properties properties = new Properties();
+                properties.load(getClass().getResourceAsStream("config.properties"));
+
+                System.load(properties.getProperty(buildPathProperty()) +
+                        name +
+                        properties.getProperty(buildExtenstionProperty())
+                );
+            }
         } catch (IOException e) {
-            throw new RuntimeException("Couldn't open resource \"config.properties\"", e);
+            throw new RuntimeException("Couldn't open static \"config.properties\"", e);
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
         }
     }
 

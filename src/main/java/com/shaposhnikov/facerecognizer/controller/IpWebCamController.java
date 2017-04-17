@@ -42,10 +42,6 @@ public class IpWebCamController {
 
     private final static Logger LOG = LoggerFactory.getLogger(IpWebCamController.class);
 
-    static {
-        NativeLoader.getInstance().load(Core.NATIVE_LIBRARY_NAME);
-    }
-
     @Autowired
     public CameraRepository cameraRepository;
 

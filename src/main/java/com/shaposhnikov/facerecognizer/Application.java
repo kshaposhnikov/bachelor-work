@@ -1,5 +1,7 @@
 package com.shaposhnikov.facerecognizer;
 
+import com.shaposhnikov.facerecognizer.util.NativeLoader;
+import org.opencv.core.Core;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -11,6 +13,10 @@ import org.springframework.boot.web.support.SpringBootServletInitializer;
 
 @SpringBootApplication
 public class Application extends SpringBootServletInitializer {
+
+    static {
+        NativeLoader.getInstance().load(Core.NATIVE_LIBRARY_NAME);
+    }
 
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
