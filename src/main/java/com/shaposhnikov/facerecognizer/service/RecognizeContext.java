@@ -1,4 +1,4 @@
-package com.shaposhnikov.facerecognizer.controller;
+package com.shaposhnikov.facerecognizer.service;
 
 import com.shaposhnikov.facerecognizer.command.Command;
 import com.shaposhnikov.facerecognizer.detector.IFaceDetector;

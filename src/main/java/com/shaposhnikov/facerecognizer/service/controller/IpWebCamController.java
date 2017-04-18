@@ -1,21 +1,19 @@
 /**
  * Created by Kirill on 22.03.2017.
  */
-package com.shaposhnikov.facerecognizer.controller;
+package com.shaposhnikov.facerecognizer.service.controller;
 
 import com.github.sarxos.webcam.util.ImageUtils;
-import com.shaposhnikov.facerecognizer.command.DetectAndRecognizeFaceCommand;
 import com.shaposhnikov.facerecognizer.command.OutputImageCommand;
 import com.shaposhnikov.facerecognizer.data.Camera;
 import com.shaposhnikov.facerecognizer.data.CameraRepository;
 import com.shaposhnikov.facerecognizer.detector.HaarFaceDetector;
-import com.shaposhnikov.facerecognizer.grabber.WebCamGrabber;
 import com.shaposhnikov.facerecognizer.grabber.WebCamGrabberNew;
 import com.shaposhnikov.facerecognizer.recognizer.FisherFaceRecognizer;
-import com.shaposhnikov.facerecognizer.recognizer.LBPHFaceRecognizer;
+import com.shaposhnikov.facerecognizer.service.CamCache;
+import com.shaposhnikov.facerecognizer.service.RecognizeContext;
+import com.shaposhnikov.facerecognizer.service.response.CameraResponse;
 import com.shaposhnikov.facerecognizer.util.ImageConverter;
-import com.shaposhnikov.facerecognizer.util.NativeLoader;
-import org.opencv.core.Core;
 import org.opencv.core.Mat;
 //import org.slf4j.Logger;
 //import org.slf4j.LoggerFactory;
@@ -23,16 +21,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
@@ -84,9 +80,18 @@ public class IpWebCamController {
     }
 
     @RequestMapping(value = "/getCameras", method = RequestMethod.GET)
-    public @ResponseBody List<Camera> getCameras() {
-        List<Camera> cameras = cameraRepository.findAll();
+    public @ResponseBody List<CameraResponse> getCameras() {
+        final List<CameraResponse> cameras = new ArrayList<>();
+        cameraRepository.findAll().forEach((Camera camera) -> {
+            cameras.add(new CameraResponse(camera.getObjectId(), camera.getName(), camera.getDescription()));
+        });
         return cameras;
+    }
+
+    @RequestMapping(value = "/getCamera", method = RequestMethod.GET)
+    public @ResponseBody CameraResponse getCamera(@RequestParam(name = "camId") String cameraId) {
+        Camera camera = cameraRepository.findOne(cameraId);
+        return new CameraResponse(camera.getObjectId(), camera.getName(), camera.getDescription());
     }
 
     private synchronized RecognizeContext createContext(String camId) throws MalformedURLException {
