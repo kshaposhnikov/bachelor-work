@@ -11,7 +11,7 @@ function startStream() {
     timerCount = setInterval(function () {
         $.ajax({
             type: "GET",
-            url: home + "/webcam/stream/123",
+            url: home + "/webcam/stream/58f91ff1341801c374bc9520",
             success: function (rawImage) {
                 frame.src = 'data:image/png;base64,' + rawImage;
                 ctx.drawImage(frame, 0, 0, 640, 480);
@@ -28,12 +28,25 @@ function stopStream() {
 
     $.ajax({
         type: "POST",
-        url: home + "/webcam/stop/123"
+        url: home + "/webcam/stop/58f91ff1341801c374bc9520"
     });
 }
 
 function closeNewCameraPopup() {
     $('#new-camera-popup').hide();
+}
+
+function activateCamera() {
+    var cameraId = $("#available-cameras").val();
+
+    $.ajax({
+        type: "POST",
+        url: home + "/webcam/activate",
+        data: {
+            "camId" : cameraId
+        }
+    });
+    closeNewCameraPopup();
 }
 
 function showNewCameraPopup() {

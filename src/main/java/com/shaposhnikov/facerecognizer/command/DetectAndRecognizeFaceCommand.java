@@ -2,8 +2,10 @@ package com.shaposhnikov.facerecognizer.command;
 
 import com.shaposhnikov.facerecognizer.detector.IFaceDetector;
 import com.shaposhnikov.facerecognizer.recognizer.IFaceRecognizer;
+import com.shaposhnikov.facerecognizer.service.RecognizeContext;
 import com.shaposhnikov.facerecognizer.updater.Updater;
 import javafx.scene.image.Image;
+import org.apache.commons.lang3.tuple.Pair;
 import org.opencv.core.Mat;
 import org.opencv.core.Rect;
 
@@ -14,18 +16,15 @@ import java.util.Collection;
  */
 public class DetectAndRecognizeFaceCommand extends DetectFaceCommand {
 
-    private final IFaceRecognizer recognizer;
-
-    public DetectAndRecognizeFaceCommand(IFaceDetector<Mat> detector, IFaceRecognizer recognizer) {
-        super(detector);
-        this.recognizer = recognizer;
+    public DetectAndRecognizeFaceCommand(RecognizeContext context) {
+        super(context);
     }
 
     @Override
-    public Collection<Rect> doWork(Mat image) {
-        Collection<Rect> faces = super.doWork(image);
-        for (Rect face : faces) {
-            Mat submat = image.submat(face);
+    public Pair<Mat, Collection<Rect>> doWork() {
+        Pair<Mat, Collection<Rect>> faces = super.doWork();
+        for (Rect face : faces.getValue()) {
+            Mat submat = faces.getKey().submat(face);
             new Thread(recognize(submat)).run();
             //System.out.println(recognizer.recognize(submat));
         }
@@ -34,7 +33,7 @@ public class DetectAndRecognizeFaceCommand extends DetectFaceCommand {
 
     private Runnable recognize(final Mat image) {
         return () -> {
-            System.out.println(recognizer.recognize(image));
+            System.out.println(context.getRecognizer().recognize(image));
         };
     }
 }

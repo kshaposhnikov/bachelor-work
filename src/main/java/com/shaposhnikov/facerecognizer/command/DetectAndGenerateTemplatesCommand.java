@@ -1,9 +1,11 @@
 package com.shaposhnikov.facerecognizer.command;
 
 import com.shaposhnikov.facerecognizer.detector.IFaceDetector;
+import com.shaposhnikov.facerecognizer.service.RecognizeContext;
 import com.shaposhnikov.facerecognizer.updater.Updater;
 import com.shaposhnikov.facerecognizer.util.ImageHelper;
 import javafx.scene.image.Image;
+import org.apache.commons.lang3.tuple.Pair;
 import org.opencv.core.Mat;
 import org.opencv.core.Rect;
 import org.opencv.core.Size;
@@ -21,17 +23,18 @@ public class DetectAndGenerateTemplatesCommand extends DetectFaceCommand {
 
     private long startTime = System.currentTimeMillis();
 
-    public DetectAndGenerateTemplatesCommand(IFaceDetector<Mat> detector, String directoryToSave) {
-        super(detector);
+    public DetectAndGenerateTemplatesCommand(RecognizeContext context, String directoryToSave) {
+        super(context);
         this.imageHelper = new ImageHelper();
         this.directoryToSave = directoryToSave;
     }
 
     @Override
-    public Collection<Rect> doWork(Mat image) {
-        for (Rect face : super.doWork(image)) {
+    public Pair<Mat, Collection<Rect>> doWork() {
+        Pair<Mat, Collection<Rect>> faces = super.doWork();
+        for (Rect face : faces.getValue()) {
             if (System.currentTimeMillis() - startTime >= 1000) {
-                Mat submat = image.submat(face);
+                Mat submat = faces.getKey().submat(face);
                 Imgproc.resize(submat, submat, new Size(240, 240));
                 imageHelper.saveImage(submat, directoryToSave, "test_" + System.currentTimeMillis() + ".png");
                 startTime = System.currentTimeMillis();

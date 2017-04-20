@@ -5,19 +5,22 @@ package com.shaposhnikov.facerecognizer.command;
 
 import com.shaposhnikov.facerecognizer.recognizer.IOpenCVFaceRecognizer;
 import com.shaposhnikov.facerecognizer.recognizer.OpenCVRecognizeContainer;
+import com.shaposhnikov.facerecognizer.service.RecognizeContext;
 
-public class TrainOpenCVRecognizerCommand implements Command <Void, OpenCVRecognizeContainer> {
+public class TrainOpenCVRecognizerCommand implements Command <Void> {
 
-    private IOpenCVFaceRecognizer recognizer;
+    private RecognizeContext context;
+    private final OpenCVRecognizeContainer container;
 
-    public TrainOpenCVRecognizerCommand(IOpenCVFaceRecognizer recognizer) {
-        this.recognizer = recognizer;
+    public TrainOpenCVRecognizerCommand(RecognizeContext context, OpenCVRecognizeContainer container) {
+        this.context = context;
+        this.container = container;
     }
 
     @Override
-    public Void doWork(OpenCVRecognizeContainer container) {
-        recognizer.train(container.getImagesToTrain(), container.getLabels());
-        recognizer.save(container.getPathToResult());
+    public Void doWork() {
+        context.getRecognizer().train(container.getImagesToTrain(), container.getLabels());
+        context.getRecognizer().save(container.getPathToResult());
         return null;
     }
 }

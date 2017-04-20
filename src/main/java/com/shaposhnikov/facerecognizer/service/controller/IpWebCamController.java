@@ -7,16 +7,9 @@ import com.github.sarxos.webcam.util.ImageUtils;
 import com.shaposhnikov.facerecognizer.command.OutputImageCommand;
 import com.shaposhnikov.facerecognizer.data.Camera;
 import com.shaposhnikov.facerecognizer.data.CameraRepository;
-import com.shaposhnikov.facerecognizer.detector.HaarFaceDetector;
-import com.shaposhnikov.facerecognizer.grabber.WebCamGrabberNew;
-import com.shaposhnikov.facerecognizer.recognizer.FisherFaceRecognizer;
-import com.shaposhnikov.facerecognizer.service.CamCache;
+import com.shaposhnikov.facerecognizer.service.ContextCacheController;
 import com.shaposhnikov.facerecognizer.service.RecognizeContext;
 import com.shaposhnikov.facerecognizer.service.response.CameraResponse;
-import com.shaposhnikov.facerecognizer.util.ImageConverter;
-import org.opencv.core.Mat;
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,11 +25,17 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
+
 @Controller
 @RequestMapping(value = "/webcam")
 public class IpWebCamController {
 
     private final static Logger LOG = LoggerFactory.getLogger(IpWebCamController.class);
+    private final Object lock = new Object();
+
+    private final static String DEFAULE_WEBCAM = "58f91ff1341801c374bc9520";
 
     @Autowired
     public CameraRepository cameraRepository;
@@ -44,23 +43,11 @@ public class IpWebCamController {
     @RequestMapping(value="/stream/{camId}", method = RequestMethod.GET)
     public @ResponseBody byte[] getStream(@PathVariable String camId) throws IOException {
         try {
-            RecognizeContext context;
-            if (CamCache.CONTEXT_CACHE.containsKey(camId)) {
-                context = CamCache.CONTEXT_CACHE.get(camId);
-                Mat raw = context.getGrabber().grab();
-                context.getCommand().doWork(raw);
+            if (ContextCacheController.containsCam(camId)) {
+                //DetectAndRecognizeFaceCommand command = new DetectAndRecognizeFaceCommand(detector, recognizer);
+                OutputImageCommand command = new OutputImageCommand(ContextCacheController.get(camId));
 
-                byte[] pixels = Base64.getEncoder().encode(
-                        ImageUtils.toByteArray(
-                                new ImageConverter().matToBufferedImage(raw),
-                                ImageUtils.FORMAT_PNG
-                        )
-                );
-
-                return pixels;
-            } else {
-                createContext(camId);
-                LOG.info("Context for camera {} created successful", camId);
+                return Base64.getEncoder().encode(command.doWork());
             }
 
             LOG.info("Were returned empty bytes");
@@ -73,9 +60,12 @@ public class IpWebCamController {
 
     @RequestMapping(value = "/stop/{camId}", method = RequestMethod.POST)
     public void stopStream(@PathVariable String camId) {
-        if (CamCache.CONTEXT_CACHE.containsKey(camId)) {
-            RecognizeContext recognizeContext = CamCache.CONTEXT_CACHE.get(camId);
-            recognizeContext.getGrabber().stop();
+        try {
+            if (ContextCacheController.containsCam(camId)) {
+                ContextCacheController.get(camId).close();
+            }
+        } catch (Exception e) {
+            LOG.error("Couldn't close context for camera " + camId, e);
         }
     }
 
@@ -94,23 +84,21 @@ public class IpWebCamController {
         return new CameraResponse(camera.getObjectId(), camera.getName(), camera.getDescription());
     }
 
-    private synchronized RecognizeContext createContext(String camId) throws MalformedURLException {
-        HaarFaceDetector detector = new HaarFaceDetector();
-        FisherFaceRecognizer recognizer = new FisherFaceRecognizer();
-        //LBPHFaceRecognizer recognizer = new LBPHFaceRecognizer();
-        recognizer.load("C:/tmp/result/resultFisher.yml");
-        //DetectAndRecognizeFaceCommand command = new DetectAndRecognizeFaceCommand(detector, recognizer);
-        OutputImageCommand command = new OutputImageCommand();
-        RecognizeContext context = new RecognizeContext(
-                //new IpWebCamGrabber(command, camId, "http://192.168.1.244:8080/video"),
-                new WebCamGrabberNew(),
-                detector,
-                recognizer,
-                command
-        );
-        context.getGrabber().start();
-        CamCache.CONTEXT_CACHE.put(camId, context);
-        return context;
+    @RequestMapping(value = "/activate", method = RequestMethod.POST)
+    public void activateCamera(@RequestParam(name = "camId") String cameraId) throws MalformedURLException {
+        synchronized (lock) {
+            Camera camera = cameraRepository.findOne(cameraId);
+            if (!ContextCacheController.containsCam(cameraId)) {
+                if (DEFAULE_WEBCAM.equals(camera.getObjectId())) {
+                    ContextCacheController.put(cameraId, RecognizeContext.getDefault());
+                } else {
+                    ContextCacheController.put(cameraId, RecognizeContext.getDefaultForRemote(camera.getAddress()));
+                }
+                LOG.info("Context for camera {} created successful", cameraId);
+            }
+
+            ContextCacheController.get(cameraId).getGrabber().start();
+        }
     }
 
     private byte[] outputTestImage() throws IOException {

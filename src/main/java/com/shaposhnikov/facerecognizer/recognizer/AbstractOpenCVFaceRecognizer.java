@@ -1,5 +1,6 @@
 package com.shaposhnikov.facerecognizer.recognizer;
 
+import org.apache.commons.lang3.StringUtils;
 import org.opencv.core.Mat;
 import org.opencv.face.FaceRecognizer;
 
@@ -14,7 +15,14 @@ public abstract class AbstractOpenCVFaceRecognizer implements IOpenCVFaceRecogni
     protected final FaceRecognizer recognizer;
 
     public AbstractOpenCVFaceRecognizer(FaceRecognizer recognizer) {
+        this(recognizer, StringUtils.EMPTY);
+    }
+
+    public AbstractOpenCVFaceRecognizer(FaceRecognizer recognizer, String configurationFile) {
         this.recognizer = recognizer;
+        if (StringUtils.isNoneEmpty(configurationFile)) {
+            load(configurationFile);
+        }
     }
 
     @Override

@@ -39,7 +39,6 @@ repositories {
 dependencies {
     compile (
         [":opencv-320:"],
-        // Maybe will look later
         [group: 'org.springframework.boot', name: 'spring-boot-starter-thymeleaf'],
         [group: 'org.springframework.boot', name: 'spring-boot-devtools'],
 //        [group: 'org.springframework.boot', name: 'spring-boot-starter-web'],
@@ -52,7 +51,9 @@ dependencies {
         [group: 'org.codehaus.jackson', name: 'jackson-mapper-asl', version: '1.9.13'],
         [group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.8.8'],
         [group: 'org.springframework.boot', name: 'spring-boot-starter-tomcat'],
-        [group: 'org.apache.tomcat.embed', name: 'tomcat-embed-jasper']
+        [group: 'org.apache.tomcat.embed', name: 'tomcat-embed-jasper'],
+        [group: 'org.apache.commons', name: 'commons-lang3', version: '3.5'],
+        [group: 'org.apache.commons', name: 'commons-collections4', version: '4.0']
 //        [group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.0.pr2']
 //        [group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.9.0.pr2']
     )

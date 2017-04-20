@@ -7,7 +7,7 @@ import javafx.scene.image.Image;
 /**
  * Created by Kirill on 28.03.2017.
  */
-public class UpdateViewCommand implements Command<Void, Image> {
+public class UpdateViewCommand {
 
     private final ImageViewUpdater updater;
 
@@ -15,7 +15,6 @@ public class UpdateViewCommand implements Command<Void, Image> {
         this.updater = updater;
     }
 
-    @Override
     public Void doWork(Image image) {
         updater.update(image);
         return null;

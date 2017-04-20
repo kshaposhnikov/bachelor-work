@@ -35,7 +35,7 @@ public abstract class AbstractFrameGrabber implements IFrameGrabber {
 
     public Runnable execute() {
         return () -> {
-            command.doWork(grab());
+            //command.doWork(grab());
         };
     }
 

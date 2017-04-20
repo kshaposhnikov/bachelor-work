@@ -1,5 +1,6 @@
 package com.shaposhnikov.facerecognizer.recognizer;
 
+import org.apache.commons.lang3.StringUtils;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
 import org.opencv.face.BasicFaceRecognizer;
@@ -15,7 +16,11 @@ import java.util.List;
 public class FisherFaceRecognizer extends AbstractOpenCVFaceRecognizer {
 
     public FisherFaceRecognizer() {
-        super(Face.createFisherFaceRecognizer());
+        this(StringUtils.EMPTY);
+    }
+
+    public FisherFaceRecognizer(String configurationFile) {
+        super(Face.createFisherFaceRecognizer(), configurationFile);
         setThreshold(1800.0);
     }
 
