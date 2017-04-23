@@ -4,6 +4,8 @@ import com.github.sarxos.webcam.Webcam;
 import com.shaposhnikov.facerecognizer.util.ImageConverter;
 import org.opencv.core.Mat;
 
+import java.awt.*;
+
 /**
  * Created by Kirill on 01.04.2017.
  */
@@ -13,6 +15,7 @@ public class WebCamGrabberNew implements IFrameGrabber {
 
     public WebCamGrabberNew() {
         this.capture = Webcam.getDefault();
+        capture.setViewSize(new Dimension(320, 240));
     }
 
     @Override

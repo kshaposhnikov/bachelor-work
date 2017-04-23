@@ -4,12 +4,16 @@
 package com.shaposhnikov.facerecognizer.service.controller;
 
 import com.github.sarxos.webcam.util.ImageUtils;
+import com.shaposhnikov.facerecognizer.command.DetectAndRecognizeFaceCommand;
 import com.shaposhnikov.facerecognizer.command.OutputImageCommand;
 import com.shaposhnikov.facerecognizer.data.Camera;
 import com.shaposhnikov.facerecognizer.data.CameraRepository;
+import com.shaposhnikov.facerecognizer.data.HumanRepository;
 import com.shaposhnikov.facerecognizer.service.ContextCacheController;
 import com.shaposhnikov.facerecognizer.service.RecognizeContext;
+import com.shaposhnikov.facerecognizer.service.RecognizedCacheController;
 import com.shaposhnikov.facerecognizer.service.response.CameraResponse;
+import com.shaposhnikov.facerecognizer.service.response.FaceResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,12 +44,19 @@ public class IpWebCamController {
     @Autowired
     public CameraRepository cameraRepository;
 
-    @RequestMapping(value="/stream/{camId}", method = RequestMethod.GET)
-    public @ResponseBody byte[] getStream(@PathVariable String camId) throws IOException {
+    @Autowired
+    public HumanRepository humanRepository;
+
+    @RequestMapping(value="/start/{camId}", method = RequestMethod.GET)
+    public @ResponseBody byte[] startStream(@PathVariable String camId) throws IOException {
         try {
             if (ContextCacheController.containsCam(camId)) {
-                //DetectAndRecognizeFaceCommand command = new DetectAndRecognizeFaceCommand(detector, recognizer);
-                OutputImageCommand command = new OutputImageCommand(ContextCacheController.get(camId));
+                DetectAndRecognizeFaceCommand command = new DetectAndRecognizeFaceCommand(
+                        ContextCacheController.get(camId),
+                        humanRepository,
+                        camId
+                );
+                //OutputImageCommand command = new OutputImageCommand(ContextCacheController.get(camId));
 
                 return Base64.getEncoder().encode(command.doWork());
             }
@@ -67,6 +78,11 @@ public class IpWebCamController {
         } catch (Exception e) {
             LOG.error("Couldn't close context for camera " + camId, e);
         }
+    }
+
+    @RequestMapping(value = "/getFace", method = RequestMethod.GET)
+    public @ResponseBody FaceResponse getRecognizedFace(@PathVariable String camId) {
+        return RecognizedCacheController.get(camId);
     }
 
     @RequestMapping(value = "/getCameras", method = RequestMethod.GET)
