@@ -1,32 +1,29 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: Kirill
-  Date: 06.04.2017
-  Time: 22:25
-  To change this template use File | Settings | File Templates.
---%>
-<html>
-    <head>
-        <script type="text/javascript" src="/resource/js/jquery-3.2.0.min.js"></script>
-        <script type="text/javascript" src="/resource/js/materialize.min.js"></script>
-        <script type="text/javascript" src="/resource/js/sface.js"></script>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <script type="text/javascript" src="/js/jquery-3.2.0.min.js"></script>
+    <script type="text/javascript" src="/js/materialize.min.js"></script>
+    <script type="text/javascript" src="/js/sface.js"></script>
 
-        <link type="text/css" href="/resource/css/materialize.min.css" rel="stylesheet">
-        <link type="text/css" href="/resource/css/sface.css" rel="stylesheet">
+    <link type="text/css" href="/css/materialize.min.css" rel="stylesheet"/>
+    <link type="text/css" href="/css/sface.css" rel="stylesheet"/>
 
-        <title>SFace - Image</title>
-    </head>
-    <body>
-        <nav>
-            <div class="nav-wrapper teal lighten-1">
-                <a href="#" class="brand-logo">SFace</a>
-                <ul class="right hide-on-med-and-down">
-                    <li><a href="/image">Image</a></li>
-                    <li><a href="/video">Video</a></li>
-                    <li><a href="/new_person">New Person</a></li>
-                    <li><a>Login</a></li>
-                </ul>
-            </div>
-        </nav>
-    </body>
+    <title>SFace - Video</title>
+</head>
+<body>
+
+<div id="root" class="root">
+    <nav>
+        <div class="nav-wrapper teal lighten-1">
+            <a href="#" class="brand-logo">SFace</a>
+            <ul class="right hide-on-med-and-down">
+                <li><a href="/image">Image</a></li>
+                <li><a href="/video">Video</a></li>
+                <li><a href="/settings">Settings</a></li>
+                <li><a>Login</a></li>
+            </ul>
+        </div>
+    </nav>
+
+</div>
+</body>
 </html>
