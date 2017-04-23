@@ -1,0 +1,110 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <script type="text/javascript" src="/js/jquery-3.2.0.min.js"></script>
+  <script type="text/javascript" src="/js/materialize.min.js"></script>
+  <script type="text/javascript" src="/js/sface.js"></script>
+
+  <link type="text/css" href="/css/materialize.min.css" rel="stylesheet"/>
+  <link type="text/css" href="/css/sface.css" rel="stylesheet"/>
+
+  <title>SFace - Settings</title>
+</head>
+<body>
+  <div id="root" class="root">
+    <nav class="nav-extended">
+      <div class="nav-wrapper teal lighten-1">
+        <a href="#" class="brand-logo">SFace</a>
+        <ul class="right hide-on-med-and-down">
+          <li><a href="/image">Image</a></li>
+          <li><a href="/video">Video</a></li>
+          <li><a href="/settings">Settings</a></li>
+          <li><a>Login</a></li>
+        </ul>
+      </div>
+      <div class="nav-content">
+        <ul class="tabs tabs-transparent">
+          <li class="tab"><a class="active" href="#update_recognizer">Update Recognizer</a></li>
+          <li class="tab"><a href="#new_person">New Person</a></li>
+          <li class="tab"><a href="#new_camera">New Camera</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <div id="update_recognizer" class="col s12">
+      <div class="upload_archive">
+        Update recognizer
+        <div>
+          <input type="text" th:readonly="true" style="width: auto"/>
+          <a class="waves-effect waves-light btn" style="float: right; margin-left: 10px">Select</a>
+        </div>
+        <a class="waves-effect waves-light btn" onclick="updateRecognizer()">Update</a>
+      </div>
+    </div>
+
+    <div id="new_person" class="col s12">
+      <div class="row" style="margin-top: 10px">
+        <form class="col s12">
+          <div class="row">
+            <div class="input-field col s6">
+              <input id="first_name" type="text" class="validate"/>
+              <label for="first_name">First Name</label>
+            </div>
+            <div class="input-field col s6">
+              <input id="last_name" type="text" class="validate"/>
+              <label for="last_name">Last Name</label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="input-field col s6">
+              <input id="email" type="email" class="validate"/>
+              <label for="email">Email</label>
+            </div>
+            <div class="input-field col s6">
+              <input id="phone" type="text"/>
+              <label for="phone">Phone</label>
+            </div>
+          </div>
+        </form>
+      </div>
+      <a class="waves-effect waves-light btn add_button">Remove</a>
+      <a class="waves-effect waves-light btn add_button">Add</a>
+    </div>
+
+    <div id="new_camera" class="col s12">
+      <div class="row" style="margin-top: 10px">
+        <form class="col s12">
+          <div class="row">
+            <div class="input-field col s6">
+              <input id="camera_name" type="text" class="validate"/>
+              <label for="camera_name">Name</label>
+            </div>
+            <div class="input-field col s6">
+              <input id="camera_address" type="text" class="validate"/>
+              <label for="camera_address">Address</label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="input-field col s6">
+              <input id="camera_success_call" type="text"/>
+              <label for="camera_success_call">Success call</label>
+            </div>
+            <div class="input-field col s6">
+              <input id="camera_error_call" type="text"/>
+              <label for="camera_error_call">Error call</label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="input-field col s12">
+              <input id="camera_description" type="text" class="validate"/>
+              <label for="camera_description">Description</label>
+            </div>
+          </div>
+        </form>
+      </div>
+      <a class="waves-effect waves-light btn add_button">Remove</a>
+      <a class="waves-effect waves-light btn add_button">Add</a>
+    </div>
+
+  </div>
+</body>
+</html>

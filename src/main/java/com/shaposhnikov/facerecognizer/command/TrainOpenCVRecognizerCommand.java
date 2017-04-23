@@ -19,6 +19,9 @@ public class TrainOpenCVRecognizerCommand implements Command <Void> {
 
     @Override
     public Void doWork() {
+        if (!container.isLoaded()) {
+            container.load();
+        }
         context.getRecognizer().train(container.getImagesToTrain(), container.getLabels());
         context.getRecognizer().save(container.getPathToResult());
         return null;
