@@ -42,6 +42,7 @@ dependencies {
         [group: 'org.springframework.boot', name: 'spring-boot-starter-thymeleaf'],
         [group: 'org.springframework.boot', name: 'spring-boot-devtools'],
 //        [group: 'org.springframework.boot', name: 'spring-boot-starter-web'],
+        [group: 'org.springframework.boot', name: 'spring-boot-starter-security'],
         [group: 'org.springframework.boot', name: 'spring-boot-starter-data-mongodb'],
         [group: 'javax.servlet', name: 'jstl'],
         [group: 'com.github.sarxos', name: 'webcam-capture', version: '0.3.10'],
@@ -54,8 +55,6 @@ dependencies {
         [group: 'org.apache.tomcat.embed', name: 'tomcat-embed-jasper'],
         [group: 'org.apache.commons', name: 'commons-lang3', version: '3.5'],
         [group: 'org.apache.commons', name: 'commons-collections4', version: '4.0']
-//        [group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.0.pr2']
-//        [group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.9.0.pr2']
     )
     //providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
     //providedRuntime 'org.apache.tomcat.embed:tomcat-embed-jasper'

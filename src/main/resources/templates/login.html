@@ -1,0 +1,40 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <script type="text/javascript" src="/js/jquery-3.2.0.min.js"></script>
+    <script type="text/javascript" src="/js/materialize.min.js"></script>
+    <script type="text/javascript" src="/js/sface.js"></script>
+
+    <link type="text/css" href="/css/materialize.min.css" rel="stylesheet"/>
+    <link type="text/css" href="/css/sface.css" rel="stylesheet"/>
+
+    <title>SFace</title>
+</head>
+
+<body>
+    <nav>
+        <div class="nav-wrapper teal lighten-1">
+            <a href="#" class="brand-logo">SFace</a>
+            <ul class="right hide-on-med-and-down">
+                <li><a href="/image">Image</a></li>
+                <li><a href="/video">Video</a></li>
+                <li><a href="/settings">Settings</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div id="root" class="root">
+        <div class="login-form">
+            <p>To use system please login</p>
+            <form th:action="@{/login}" method="post">
+                <div><label> User Name : <input type="text" name="username"/> </label></div>
+                <div><label> Password: <input type="password" name="password"/> </label></div>
+                <div><input type="submit" value="Sign In"/></div>
+            </form>
+            <p>The system supports two user types: User, Admin</p>
+            <p>Users can activate cameras and see recognized faces</p>
+            <p>Admins can add cameras and new people to the System</p>
+        </div>
+    </div>
+
+</body>
+</html>
