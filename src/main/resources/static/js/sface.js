@@ -35,19 +35,24 @@ function stopStream() {
 }
 
 function getFaces(cameraId) {
-    timerCount = setInterval(function () {
+    timerCount += setInterval(function () {
         $.ajax({
             type: "GET",
             url: home + "/webcam/getFace/",
             data: {
                 "camId" : cameraId
             },
-            success: function (rawImage) {
-                frame.src = 'data:image/png;base64,' + rawImage;
-                ctx.drawImage(frame, 0, 0, 640, 480);
+            success: function (faceResponse) {
+                $("#face-list")
+                    .append(
+                        "<div>" +
+                            "<img width=\"64\" height=\"64\" src=\"" + 'data:image/png;base64,' + faceResponse.face + "\"/>" +
+                            "<div>" + faceResponse.human.firstName + ' ' +  faceResponse.human.lastName + "</div>" +
+                        "</div>"
+                    )
             }
         });
-    }, 30);
+    }, 1000 * 30);
 }
 
 function closeNewCameraPopup() {

@@ -81,7 +81,7 @@ public class IpWebCamController {
     }
 
     @RequestMapping(value = "/getFace", method = RequestMethod.GET)
-    public @ResponseBody FaceResponse getRecognizedFace(@PathVariable String camId) {
+    public @ResponseBody FaceResponse getRecognizedFace(@RequestParam(name = "camId") String camId) {
         return RecognizedCacheController.get(camId);
     }
 
