@@ -2,6 +2,10 @@ var timerCount = 0;
 //var home = "/face-recognizer-service";
 var home = "";
 
+$(document).ready(function() {
+    $('select').material_select();
+});
+
 function startStream() {
     var liveVideoCanvas = document.getElementById('liveVideo');
     var ctx = liveVideoCanvas.getContext('2d');
@@ -82,7 +86,8 @@ function showNewCameraPopup() {
             $("#available-cameras").empty();
             $.each(json, function (i, camera) {
                 $("#available-cameras").append($('<option>').text(camera.cameraName).attr('value', camera.cameraId));
-            })
+            });
+            $('select').material_select();
         }
     });
 }

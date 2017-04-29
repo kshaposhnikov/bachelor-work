@@ -33,11 +33,18 @@
     <div id="update_recognizer" class="col s12">
       <div class="upload_archive">
         Update recognizer
-        <div>
-          <input type="text" th:readonly="true" style="width: auto"/>
-          <a class="waves-effect waves-light btn" style="float: right; margin-left: 10px">Select</a>
-        </div>
-        <a class="waves-effect waves-light btn" onclick="updateRecognizer()">Update</a>
+        <form method="post" enctype="multipart/form-data" action="/settings/updateRecognizer">
+          <div class="file-field input-field">
+            <div class="btn">
+              <span>File</span>
+              <input type="file" name="file"/>
+            </div>
+            <div class="file-path-wrapper">
+              <input class="file-path validate" type="text"/>
+            </div>
+          </div>
+          <button class="btn waves-effect waves-light" type="submit" name="upload">Upload</button>
+        </form>
       </div>
     </div>
 
