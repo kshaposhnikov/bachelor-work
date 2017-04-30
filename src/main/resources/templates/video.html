@@ -3,6 +3,7 @@
         <script type="text/javascript" src="/js/jquery-3.2.0.min.js"></script>
         <script type="text/javascript" src="/js/materialize.min.js"></script>
         <script type="text/javascript" src="/js/sface.js"></script>
+        <script type="text/javascript" src="/js/sockjs-0.3.4.min.js"></script>
 
         <link type="text/css" href="/css/materialize.min.css" rel="stylesheet"/>
         <link type="text/css" href="/css/sface.css" rel="stylesheet"/>
@@ -39,8 +40,8 @@
 
                     </div>
                     <div id="control-panel" class="control-panel">
-                        <a class="waves-effect waves-light btn" id="startStream" onclick="startStream()">Start</a>
-                        <a class="waves-effect waves-light btn" id="stopStream" onclick="stopStream()">Stop</a>
+                        <a class="waves-effect waves-light btn" id="startStream" onclick="showNewCameraPopup()">Connect</a>
+                        <a class="waves-effect waves-light btn" id="stopStream" onclick="disconnectFromCamera()">Disconnect</a>
                     </div>
                 </div>
 
@@ -60,13 +61,17 @@
             <div id="new-camera-popup" class="modal modal-fixed-footer">
                 <div class="modal-content">
                     <h4>Available</h4>
-                    <select id="available-cameras" size="5" onchange="getCameraDescriptionBySelectedCamera()" style="display: inline; height: 50%">
-                    </select>
-                    <p id="cameraDescription"></p>
+                    <!--<select id="available-cameras" size="5" onchange="getCameraDescriptionBySelectedCamera()" style="display: inline; height: 50%">-->
+                    <!--</select>-->
+                    <div class="input-field col s12" style="margin-top: 5px">
+                        <select id="available-cameras" size="5" onchange="getCameraDescriptionBySelectedCamera()">
+                        </select>
+                    </div>
+                    <p id="cameraDescription" style="margin-top: 5px"></p>
                 </div>
                 <div class="modal-footer">
                     <a class="modal-action modal-close waves-effect waves-green btn-flat" onclick="closeNewCameraPopup()">Cancel</a>
-                    <a class="modal-action modal-close waves-effect waves-green btn-flat" onclick="activateCamera()">Add</a>
+                    <a class="modal-action modal-close waves-effect waves-green btn-flat" onclick="connectToCamera()">Add</a>
                 </div>
             </div>
         </div>

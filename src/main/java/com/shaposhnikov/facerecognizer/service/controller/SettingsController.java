@@ -1,10 +1,18 @@
 package com.shaposhnikov.facerecognizer.service.controller;
 
+import com.github.sarxos.webcam.Webcam;
+import com.github.sarxos.webcam.WebcamUpdater;
+import com.github.sarxos.webcam.ds.ipcam.IpCamDevice;
+import com.github.sarxos.webcam.ds.ipcam.IpCamDeviceRegistry;
+import com.github.sarxos.webcam.ds.ipcam.IpCamMode;
 import com.shaposhnikov.facerecognizer.command.TrainOpenCVRecognizerCommand;
 import com.shaposhnikov.facerecognizer.data.*;
 import com.shaposhnikov.facerecognizer.recognizer.MongoBaseRecognizeContainer;
 import com.shaposhnikov.facerecognizer.service.RecognizeContext;
+import com.shaposhnikov.facerecognizer.service.response.CameraResponse;
 import com.shaposhnikov.facerecognizer.spring.ApplicationContextProvider;
+import com.shaposhnikov.facerecognizer.streamserver.SFaceWebcamListener;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,12 +20,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.awt.*;
 import java.io.File;
+import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
@@ -96,6 +110,40 @@ public class SettingsController {
         }
     }
 
+    @RequestMapping(value = "/camera/start", method = RequestMethod.POST)
+    public String startCamera(@RequestParam("cameraId") final String cameraId) {
+        if (CollectionUtils.isEmpty(Webcam.getWebcams())) {
+            cameraRepository.findAll().forEach(camera -> {
+                try {
+                    IpCamDevice device = new IpCamDevice(camera.getObjectId(), camera.getAddress(), IpCamMode.PUSH);
+                    IpCamDeviceRegistry.register(device);
+                } catch (MalformedURLException e) {
+                    throw new RuntimeException("Couldn't create webcam device with address " + camera.getAddress());
+                }
+            });
+        }
+        Webcam.getWebcams().forEach(camera -> {
+            String name = camera.getName();
+            if ((cameraId.equals(name) || name.contains(cameraRepository.findOne(cameraId).getName()))
+                    && !camera.isOpen()) {
+                camera.addWebcamListener(new SFaceWebcamListener(RecognizeContext.getDefaultForRemote(), humanRepository));
+                camera.setViewSize(new Dimension(320, 240));
+                camera.open(true, new WebcamUpdater.DelayCalculator() {
+                    @Override
+                    public long calculateDelay(long snapshotDuration, double deviceFps) {
+                        return Math.max(100 - snapshotDuration, 0);
+                    }
+                });
+            }
+        });
+        return "redirect:/settings";
+    }
+
+    @RequestMapping(value = "/getCameras", method = RequestMethod.GET)
+    public @ResponseBody List<Camera> getCameras() {
+        return cameraRepository.findAll();
+    }
+
     @RequestMapping(value = "/newPerson", method = RequestMethod.POST)
     public void addNewPerson(Human human) {
         humanRepository.insert(human);
@@ -104,5 +152,6 @@ public class SettingsController {
     @RequestMapping(value = "/newCamera", method = RequestMethod.POST)
     public void addNewCamera(Camera camera) {
         cameraRepository.insert(camera);
+
     }
 }

@@ -1,6 +1,8 @@
 package com.shaposhnikov.facerecognizer.grabber;
 
 import com.github.sarxos.webcam.Webcam;
+import com.github.sarxos.webcam.ds.buildin.WebcamDefaultDevice;
+import com.shaposhnikov.facerecognizer.streamserver.SFaceWebcamListener;
 import com.shaposhnikov.facerecognizer.util.ImageConverter;
 import org.opencv.core.Mat;
 
@@ -21,7 +23,7 @@ public class WebCamGrabberNew implements IFrameGrabber {
     @Override
     public void start() {
         if (!capture.isOpen()) {
-            capture.open();
+            capture.open(true);
         }
     }
 

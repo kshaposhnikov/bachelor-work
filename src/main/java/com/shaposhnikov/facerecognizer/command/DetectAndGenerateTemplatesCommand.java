@@ -11,6 +11,7 @@ import org.opencv.core.Rect;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
+import java.awt.image.BufferedImage;
 import java.util.Collection;
 
 /**
@@ -30,8 +31,8 @@ public class DetectAndGenerateTemplatesCommand extends DetectFaceCommand {
     }
 
     @Override
-    public Pair<Mat, Collection<Rect>> doWork() {
-        Pair<Mat, Collection<Rect>> faces = super.doWork();
+    public Pair<Mat, Collection<Rect>> doWork(BufferedImage rawImage) {
+        Pair<Mat, Collection<Rect>> faces = super.doWork(rawImage);
         for (Rect face : faces.getValue()) {
             if (System.currentTimeMillis() - startTime >= 1000) {
                 Mat submat = faces.getKey().submat(face);

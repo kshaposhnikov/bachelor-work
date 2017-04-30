@@ -11,10 +11,10 @@
 }
 
 .player {
-    position: absolute;
-    left: 50%;
-    margin-right: -50%;
-    transform: translate(-50%, 0);
+    /*position: absolute;*/
+    margin-left: 20%;
+    /*margin-right: -70%;*/
+    /*transform: translate(-50%, 0);*/
 }
 
 .control-panel {
@@ -34,7 +34,7 @@
 
 .recognized-list {
     float: right;
-    width: 10%;
+    width: 30%;
     height: auto;
     display: inline-block;
     margin-right: 5px;
@@ -67,6 +67,16 @@
     position: absolute;
     transform: translate(-50%, 60%);
 }
+#face-list {
+    border: 1px solid #CCCCCC;
+    border-right-color: #999999;
+    border-bottom-color: #999999;
+    height: 70%;
+    width: 100%;
+    overflow-y: scroll;
+    padding: 5px;
+}
+
 
 .upload_archive {
     position: absolute;

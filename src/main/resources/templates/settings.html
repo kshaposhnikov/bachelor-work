@@ -9,7 +9,7 @@
 
   <title>SFace - Settings</title>
 </head>
-<body>
+<body onload="loadListCamerasForSettngs()">
   <div id="root" class="root">
     <nav class="nav-extended">
       <div class="nav-wrapper teal lighten-1">
@@ -26,6 +26,7 @@
           <li class="tab"><a class="active" href="#update_recognizer">Update Recognizer</a></li>
           <li class="tab"><a href="#new_person">New Person</a></li>
           <li class="tab"><a href="#new_camera">New Camera</a></li>
+          <li class="tab"><a href="#all_cameras">All Cameras</a></li>
         </ul>
       </div>
     </nav>
@@ -110,6 +111,24 @@
       </div>
       <a class="waves-effect waves-light btn add_button">Remove</a>
       <a class="waves-effect waves-light btn add_button">Add</a>
+    </div>
+
+    <div id="all_cameras" class="col s12">
+      <div class="row" style="margin-top: 10px">
+        <table id="list_cameras">
+          <thead>
+            <tr>
+              <th>Id</th>
+              <th>Name</th>
+              <th>Address</th>
+              <th>Description</th>
+              <th>Options</th>
+            </tr>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
+      </div>
     </div>
 
   </div>

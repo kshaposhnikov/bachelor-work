@@ -3,6 +3,7 @@
  */
 package com.shaposhnikov.facerecognizer.service.controller;
 
+import com.github.sarxos.webcam.Webcam;
 import com.github.sarxos.webcam.util.ImageUtils;
 import com.shaposhnikov.facerecognizer.command.DetectAndRecognizeFaceCommand;
 import com.shaposhnikov.facerecognizer.command.OutputImageCommand;
@@ -19,6 +20,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.socket.config.annotation.ServletWebSocketHandlerRegistration;
+import org.springframework.web.socket.config.annotation.ServletWebSocketHandlerRegistry;
+import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -51,14 +55,14 @@ public class IpWebCamController {
     public @ResponseBody byte[] startStream(@PathVariable String camId) throws IOException {
         try {
             if (ContextCacheController.containsCam(camId)) {
-                DetectAndRecognizeFaceCommand command = new DetectAndRecognizeFaceCommand(
-                        ContextCacheController.get(camId),
-                        humanRepository,
-                        camId
-                );
+//                DetectAndRecognizeFaceCommand command = new DetectAndRecognizeFaceCommand(
+//                        ContextCacheController.get(camId),
+//                        humanRepository,
+//                        camId
+//                );
                 //OutputImageCommand command = new OutputImageCommand(ContextCacheController.get(camId));
 
-                return Base64.getEncoder().encode(command.doWork());
+                //return Base64.getEncoder().encode(command.doWork());
             }
 
             LOG.info("Were returned empty bytes");
@@ -73,7 +77,7 @@ public class IpWebCamController {
     public void stopStream(@PathVariable String camId) {
         try {
             if (ContextCacheController.containsCam(camId)) {
-                ContextCacheController.get(camId).close();
+               // ContextCacheController.get(camId).close();
             }
         } catch (Exception e) {
             LOG.error("Couldn't close context for camera " + camId, e);
@@ -88,9 +92,18 @@ public class IpWebCamController {
     @RequestMapping(value = "/getCameras", method = RequestMethod.GET)
     public @ResponseBody List<CameraResponse> getCameras() {
         final List<CameraResponse> cameras = new ArrayList<>();
-        cameraRepository.findAll().forEach((Camera camera) -> {
-            cameras.add(new CameraResponse(camera.getObjectId(), camera.getName(), camera.getDescription()));
-        });
+        cameraRepository.findAll().stream()
+                .filter(item -> {
+                    for (Webcam webcam : Webcam.getWebcams()) {
+                        if (webcam.getName().contains(item.getName()) && webcam.isOpen()) {
+                            return true;
+                        }
+                    }
+                    return false;
+                })
+                .forEach((Camera camera) -> {
+                    cameras.add(new CameraResponse(camera.getObjectId(), camera.getName(), camera.getDescription()));
+                });
         return cameras;
     }
 
@@ -108,12 +121,12 @@ public class IpWebCamController {
                 if (DEFAULE_WEBCAM.equals(camera.getObjectId())) {
                     ContextCacheController.put(cameraId, RecognizeContext.getDefault());
                 } else {
-                    ContextCacheController.put(cameraId, RecognizeContext.getDefaultForRemote(camera.getAddress()));
+                    //ContextCacheController.put(cameraId, RecognizeContext.getDefaultForRemote(cameraId, camera.getAddress()));
                 }
                 LOG.info("Context for camera {} created successful", cameraId);
             }
 
-            ContextCacheController.get(cameraId).getGrabber().start();
+          //  ContextCacheController.get(cameraId).getGrabber().start();
         }
     }
 

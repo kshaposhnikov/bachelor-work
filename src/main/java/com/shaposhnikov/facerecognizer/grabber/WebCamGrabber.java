@@ -10,6 +10,7 @@ import java.util.concurrent.Executors;
 /**
  * Created by Kirill on 26.02.2017.
  */
+@Deprecated
 public class WebCamGrabber extends AbstractFrameGrabber {
 
     private final VideoCapture capture;

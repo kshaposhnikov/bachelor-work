@@ -13,13 +13,14 @@ import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
+import java.awt.image.BufferedImage;
 import java.util.Collection;
 import java.util.Map;
 
 /**
  * Created by Kirill on 13.03.2017.
  */
-public class DetectFaceCommand implements Command<Pair<Mat, Collection<Rect>>> {
+public class DetectFaceCommand {
 
     private final static Integer SHIFT_X = 10;
     private final static Integer SHIFT_Y = 20;
@@ -32,9 +33,9 @@ public class DetectFaceCommand implements Command<Pair<Mat, Collection<Rect>>> {
         this.context = context;
     }
 
-    @Override
-    public Pair<Mat, Collection<Rect>> doWork() {
-        Mat image = context.getGrabber().grab();
+//    @Override
+    public Pair<Mat, Collection<Rect>> doWork(BufferedImage rawImage) {
+        Mat image= ImageConverter.bufferedImageToMat(rawImage); // = context.getGrabber().grab();
         Collection<Rect> processedFaces = context.getDetector().detect(image);
         for (Rect face : processedFaces) {
             int oldFaceX = face.x;
