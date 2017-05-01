@@ -9,38 +9,6 @@ $(document).ready(function() {
     $('select').material_select();
 });
 
-function startStream() {
-    var liveVideoCanvas = document.getElementById('liveVideo');
-    var ctx = liveVideoCanvas.getContext('2d');
-    var frame = document.getElementById('frame');
-    var camId = "58f91ff1341801c374bc9520";
-
-    timerCount = setInterval(function () {
-        $.ajax({
-            type: "GET",
-            url: home + "/webcam/start/" + camId,
-            success: function (rawImage) {
-                frame.src = 'data:image/png;base64,' + rawImage;
-                ctx.drawImage(frame, 0, 0, 640, 480);
-            }
-        });
-    }, 30);
-
-    getFaces(camId);
-}
-
-function stopStream() {
-    for (var interval = 1; interval <= timerCount; interval++) {
-        clearInterval(interval);
-    }
-    timerCount = 0;
-
-    $.ajax({
-        type: "POST",
-        url: home + "/webcam/stop/58f91ff1341801c374bc9520"
-    });
-}
-
 function getFaces(cameraId) {
     timerCount += setInterval(function () {
         $.ajax({
@@ -53,8 +21,8 @@ function getFaces(cameraId) {
                 $("#face-list")
                     .append(
                         "<div>" +
-                            "<img width=\"64\" height=\"64\" src=\"" + 'data:image/png;base64,' + faceResponse.face + "\"/>" +
-                            "<div>" + faceResponse.human.firstName + ' ' +  faceResponse.human.lastName + "</div>" +
+                            "<img class=\"circle\" width=\"64\" height=\"64\" src=\"" + 'data:image/png;base64,' + faceResponse.face + "\"/>" +
+                            "<div style='float: right; margin-top: 10px;'>" + faceResponse.human.firstName + ' ' +  faceResponse.human.lastName + "</div>" +
                         "</div>"
                     )
             }
@@ -64,19 +32,6 @@ function getFaces(cameraId) {
 
 function closeNewCameraPopup() {
     $('#new-camera-popup').hide();
-}
-
-function activateCamera() {
-    var cameraId = $("#available-cameras").val();
-
-    $.ajax({
-        type: "POST",
-        url: home + "/webcam/activate",
-        data: {
-            "camId" : cameraId
-        }
-    });
-    closeNewCameraPopup();
 }
 
 function connectToCamera() {
@@ -175,7 +130,23 @@ function stopCamera(camId) {
     });
 }
 
-function loadListCamerasForSettngs() {
+function removePerson(personId) {
+    // This Function dynamically inject to table with list of the cameras on Settings page
+    $.ajax({
+        type: "POST",
+        url: home + "/settings/removePerson",
+        data: {
+            "personId" : personId
+        }
+    });
+}
+
+function onLoadSettingsPage() {
+    loadListCamerasForSettings();
+    loadListPersonForSettings();
+}
+
+function loadListCamerasForSettings() {
     $.ajax({
         type: "GET",
         url: home + "/settings/getCameras",
@@ -201,6 +172,37 @@ function loadListCamerasForSettngs() {
                                 .attr('class', 'waves-effect waves-light btn add_button')
                                 .attr('onclick', 'stopCamera(\''+ camera.objectId +'\')')
                                 .text('Stop')
+                        )
+                    )
+                );
+            });
+        }
+    });
+}
+
+function loadListPersonForSettings() {
+    $.ajax({
+        type: "GET",
+        url: home + "/settings/getHumans",
+        success: function (json) {
+            $.each(json, function (i, person) {
+                $("#list_person").find('tbody').append(
+                    $('<tr>').append(
+                        $('<td>').text(person.humanId)
+                    ).append(
+                        $('<td>').text(person.firstName)
+                    ).append(
+                        $('<td>').text(person.lastName)
+                    ).append(
+                        $('<td>').text(person.email)
+                    ).append(
+                        $('<td>').text(person.phone)
+                    ).append(
+                        $('<td>').append(
+                            $('<a>')
+                                .attr('class', 'waves-effect waves-light btn add_button')
+                                .attr('onclick', 'removePerson(\''+ person.objectId +'\')')
+                                .text('Remove')
                         )
                     )
                 );

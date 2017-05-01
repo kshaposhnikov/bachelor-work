@@ -1,10 +1,9 @@
 package com.shaposhnikov.facerecognizer.service.controller;
 
 import com.github.sarxos.webcam.Webcam;
+import com.github.sarxos.webcam.WebcamDriver;
 import com.github.sarxos.webcam.WebcamUpdater;
-import com.github.sarxos.webcam.ds.ipcam.IpCamDevice;
-import com.github.sarxos.webcam.ds.ipcam.IpCamDeviceRegistry;
-import com.github.sarxos.webcam.ds.ipcam.IpCamMode;
+import com.github.sarxos.webcam.ds.ipcam.*;
 import com.shaposhnikov.facerecognizer.command.TrainOpenCVRecognizerCommand;
 import com.shaposhnikov.facerecognizer.data.*;
 import com.shaposhnikov.facerecognizer.recognizer.MongoBaseRecognizeContainer;
@@ -111,12 +110,16 @@ public class SettingsController {
     }
 
     @RequestMapping(value = "/camera/start", method = RequestMethod.POST)
-    public String startCamera(@RequestParam("cameraId") final String cameraId) {
-        if (CollectionUtils.isEmpty(Webcam.getWebcams())) {
+    public @ResponseBody void startCamera(@RequestParam("cameraId") final String cameraId) {
+        if (CollectionUtils.isEmpty(Webcam.getWebcams()) || Webcam.getWebcams().size() == 1) {
             cameraRepository.findAll().forEach(camera -> {
                 try {
-                    IpCamDevice device = new IpCamDevice(camera.getObjectId(), camera.getAddress(), IpCamMode.PUSH);
-                    IpCamDeviceRegistry.register(device);
+                    if (!"localhost".equals(camera.getAddress()) && !IpCamDeviceRegistry.isRegistered(camera.getObjectId())) {
+                        IpCamDevice device = new IpCamDevice(camera.getObjectId(), camera.getAddress(), IpCamMode.PUSH);
+                        IpCamDriver driver = new IpCamDriver();
+                        driver.register(device);
+                        Webcam.setDriver(driver);
+                    }
                 } catch (MalformedURLException e) {
                     throw new RuntimeException("Couldn't create webcam device with address " + camera.getAddress());
                 }
@@ -127,16 +130,21 @@ public class SettingsController {
             if ((cameraId.equals(name) || name.contains(cameraRepository.findOne(cameraId).getName()))
                     && !camera.isOpen()) {
                 camera.addWebcamListener(new SFaceWebcamListener(RecognizeContext.getDefaultForRemote(), humanRepository));
-                camera.setViewSize(new Dimension(320, 240));
-                camera.open(true, new WebcamUpdater.DelayCalculator() {
-                    @Override
-                    public long calculateDelay(long snapshotDuration, double deviceFps) {
-                        return Math.max(100 - snapshotDuration, 0);
-                    }
-                });
+ //               camera.setViewSize(new Dimension(640, 480));
+                camera.open(true, (snapshotDuration, deviceFps) -> Math.max(100 - snapshotDuration, 0));
             }
         });
-        return "redirect:/settings";
+        //return "redirect:/settings";
+    }
+
+    @RequestMapping(value = "/camera/stop", method = RequestMethod.POST)
+    public @ResponseBody void stopCamera(@RequestParam("cameraId") final String cameraId) {
+        Webcam.getWebcams().forEach(webcam -> {
+            if (cameraId.equals(webcam.getName())
+                    || webcam.getName().contains(cameraRepository.findOne(cameraId).getName())) {
+                webcam.close();
+            }
+        });
     }
 
     @RequestMapping(value = "/getCameras", method = RequestMethod.GET)
@@ -144,9 +152,19 @@ public class SettingsController {
         return cameraRepository.findAll();
     }
 
+    @RequestMapping(value = "/getHumans", method = RequestMethod.GET)
+    public @ResponseBody List<Human> getHumans() {
+        return humanRepository.findAll();
+    }
+
     @RequestMapping(value = "/newPerson", method = RequestMethod.POST)
-    public void addNewPerson(Human human) {
+    public @ResponseBody void addNewPerson(Human human) {
         humanRepository.insert(human);
+    }
+
+    @RequestMapping(value = "/removePerson", method = RequestMethod.POST)
+    public void removeHuman(@RequestParam("personId") String personId) {
+        humanRepository.delete(personId);
     }
 
     @RequestMapping(value = "/newCamera", method = RequestMethod.POST)

@@ -51,13 +51,16 @@ public class DetectAndRecognizeFaceCommand {
             } else {
                 human = humanRepository.findByHumanId(humanId);
             }
-            RecognizedCacheController.add(
-                    cameraId,
-                    new FaceResponse(
-                            ImageHelper.resizeImage(ImageConverter.matToBufferedImage(image), 64, 64),
-                            human
-                    )
-            );
+
+            if (!RecognizedCacheController.containsFaceForCamera(cameraId, humanId)) {
+                RecognizedCacheController.add(
+                        cameraId,
+                        new FaceResponse(
+                                ImageHelper.resizeImage(ImageConverter.matToBufferedImage(image), 64, 64),
+                                human
+                        )
+                );
+            }
         };
     }
 }

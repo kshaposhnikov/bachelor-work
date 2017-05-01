@@ -21,12 +21,27 @@ public class RecognizedCacheController {
         return null;
     }
 
+    public static boolean containsFaceForCamera(String cameraId, String humanId) {
+        if (FACE_CACHE.containsKey(cameraId)) {
+            for (FaceResponse faceResponse : FACE_CACHE.get(cameraId)) {
+                if (humanId.equals(faceResponse.getHuman().getHumanId())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     public static void add(String cameraId, FaceResponse response) {
         synchronized (lock) {
             if (!FACE_CACHE.containsKey(cameraId)) {
                 FACE_CACHE.put(cameraId, new ConcurrentLinkedQueue<>());
+            } else {
+                if (FACE_CACHE.get(cameraId).size() > 20) {
+                    FACE_CACHE.get(cameraId).clear();
+                }
+                FACE_CACHE.get(cameraId).add(response);
             }
-            FACE_CACHE.get(cameraId).add(response);
         }
     }
 }

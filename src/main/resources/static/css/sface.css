@@ -11,16 +11,18 @@
 }
 
 .player {
-    /*position: absolute;*/
-    margin-left: 20%;
-    /*margin-right: -70%;*/
-    /*transform: translate(-50%, 0);*/
+    position: absolute;
+    margin-left: 10%;
+    display: inline-block;
+    /*margin-right: -50%;*/
+    /*transform: translate(-90%, 0);*/
 }
 
 .control-panel {
-    margin: 5px auto;
-    position: absolute;
-    left: 50%;
+    /*margin: 5px auto;*/
+    margin-top: 5px;
+    position: relative;
+    left: 76%;
     transform: translate(-50%, 0);
 }
 
@@ -37,7 +39,18 @@
     width: 30%;
     height: auto;
     display: inline-block;
-    margin-right: 5px;
+    margin-top: 20px;
+    margin-right: 10%;
+}
+
+#face-list {
+    border: 2px solid #CCCCCC;
+    border-right-color: #999999;
+    border-bottom-color: #999999;
+    height: 85%;
+    width: 100%;
+    overflow-y: scroll;
+    padding: 5px;
 }
 
 .select-camera {
@@ -67,16 +80,6 @@
     position: absolute;
     transform: translate(-50%, 60%);
 }
-#face-list {
-    border: 1px solid #CCCCCC;
-    border-right-color: #999999;
-    border-bottom-color: #999999;
-    height: 70%;
-    width: 100%;
-    overflow-y: scroll;
-    padding: 5px;
-}
-
 
 .upload_archive {
     position: absolute;
