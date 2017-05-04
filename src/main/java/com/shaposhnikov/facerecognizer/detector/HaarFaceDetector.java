@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by Kirill on 28.02.2017.
@@ -67,8 +68,9 @@ public class HaarFaceDetector implements IFaceDetector<Mat> {
             LOG.info("Apply cascade");
         }
 
-        LOG.info("Were found {} faces", rect.elemSize());
-        return rect.toList();
+        List<Rect> rects = rect.toList();
+        LOG.info("Were found {} faces", rects.size());
+        return rects;
     }
 
     private static String getPathToCascade() {

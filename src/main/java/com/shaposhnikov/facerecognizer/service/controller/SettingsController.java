@@ -116,9 +116,10 @@ public class SettingsController {
                 try {
                     if (!"localhost".equals(camera.getAddress()) && !IpCamDeviceRegistry.isRegistered(camera.getObjectId())) {
                         IpCamDevice device = new IpCamDevice(camera.getObjectId(), camera.getAddress(), IpCamMode.PUSH);
-                        IpCamDriver driver = new IpCamDriver();
-                        driver.register(device);
-                        Webcam.setDriver(driver);
+                        IpCamDeviceRegistry.register(device);
+                        // IpCamDriver driver = new IpCamDriver();
+                        //driver.register(device);
+                      //  Webcam.setDriver(driver);
                     }
                 } catch (MalformedURLException e) {
                     throw new RuntimeException("Couldn't create webcam device with address " + camera.getAddress());

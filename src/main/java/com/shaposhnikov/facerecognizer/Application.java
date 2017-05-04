@@ -1,5 +1,7 @@
 package com.shaposhnikov.facerecognizer;
 
+import com.github.sarxos.webcam.Webcam;
+import com.github.sarxos.webcam.ds.ipcam.IpCamDriver;
 import com.shaposhnikov.facerecognizer.util.NativeLoader;
 import org.opencv.core.Core;
 import org.springframework.boot.SpringApplication;
@@ -16,6 +18,7 @@ public class Application extends SpringBootServletInitializer {
 
     static {
         NativeLoader.getInstance().load(Core.NATIVE_LIBRARY_NAME);
+        Webcam.setDriver(new IpCamDriver());
     }
 
     public static void main(String[] args) {

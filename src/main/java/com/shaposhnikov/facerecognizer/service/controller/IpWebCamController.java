@@ -95,7 +95,7 @@ public class IpWebCamController {
         cameraRepository.findAll().stream()
                 .filter(item -> {
                     for (Webcam webcam : Webcam.getWebcams()) {
-                        if (webcam.getName().contains(item.getName()) && webcam.isOpen()) {
+                        if ((webcam.getName().contains(item.getName()) || webcam.getName().contains(item.getObjectId())) && webcam.isOpen()) {
                             return true;
                         }
                     }
