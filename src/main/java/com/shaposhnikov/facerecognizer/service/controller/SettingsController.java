@@ -1,14 +1,13 @@
 package com.shaposhnikov.facerecognizer.service.controller;
 
 import com.github.sarxos.webcam.Webcam;
-import com.github.sarxos.webcam.WebcamDriver;
-import com.github.sarxos.webcam.WebcamUpdater;
-import com.github.sarxos.webcam.ds.ipcam.*;
+import com.github.sarxos.webcam.ds.ipcam.IpCamDevice;
+import com.github.sarxos.webcam.ds.ipcam.IpCamDeviceRegistry;
+import com.github.sarxos.webcam.ds.ipcam.IpCamMode;
 import com.shaposhnikov.facerecognizer.command.TrainOpenCVRecognizerCommand;
 import com.shaposhnikov.facerecognizer.data.*;
 import com.shaposhnikov.facerecognizer.recognizer.MongoBaseRecognizeContainer;
 import com.shaposhnikov.facerecognizer.service.RecognizeContext;
-import com.shaposhnikov.facerecognizer.service.response.CameraResponse;
 import com.shaposhnikov.facerecognizer.spring.ApplicationContextProvider;
 import com.shaposhnikov.facerecognizer.streamserver.SFaceWebcamListener;
 import org.apache.commons.collections4.CollectionUtils;
@@ -19,17 +18,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.awt.*;
 import java.io.File;
 import java.net.MalformedURLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -153,24 +149,54 @@ public class SettingsController {
         return cameraRepository.findAll();
     }
 
+    @RequestMapping(value = "/getCamera", method = RequestMethod.GET)
+    public @ResponseBody Camera getCamera(@RequestParam String cameraId) {
+        return cameraRepository.findOne(cameraId);
+    }
+
+    @RequestMapping(value = "/updateCamera", method = RequestMethod.POST)
+    public String updateCamera(Camera camera) {
+        cameraRepository.save(camera);
+        return "redirect:/settings#all_cameras";
+    }
+
+    @RequestMapping(value = "/removeCamera", method = RequestMethod.POST)
+    public String removeCamera(String cameraId) {
+        cameraRepository.delete(cameraId);
+        return "redirect:/settings#all_cameras";
+    }
+
     @RequestMapping(value = "/getHumans", method = RequestMethod.GET)
     public @ResponseBody List<Human> getHumans() {
         return humanRepository.findAll();
     }
 
+    @RequestMapping(value = "/getHuman", method = RequestMethod.GET)
+    public @ResponseBody Human getHuman(@RequestParam String humanId) {
+        return humanRepository.findOne(humanId);
+    }
+
     @RequestMapping(value = "/newPerson", method = RequestMethod.POST)
-    public @ResponseBody void addNewPerson(Human human) {
+    public String addNewPerson(Human human) {
         humanRepository.insert(human);
+        return "redirect:/settings#new_person";
+    }
+
+    @RequestMapping(value = "/updatePerson", method = RequestMethod.POST)
+    public String updatePerson(Human human) {
+        humanRepository.save(human);
+        return "redirect:/settings#all_person";
     }
 
     @RequestMapping(value = "/removePerson", method = RequestMethod.POST)
-    public void removeHuman(@RequestParam("personId") String personId) {
+    public String removeHuman(@RequestParam("personId") String personId) {
         humanRepository.delete(personId);
+        return "redirect:/settings#all_person";
     }
 
     @RequestMapping(value = "/newCamera", method = RequestMethod.POST)
-    public void addNewCamera(Camera camera) {
+    public String addNewCamera(Camera camera) {
         cameraRepository.insert(camera);
-
+        return "redirect:/settings#new_camera";
     }
 }

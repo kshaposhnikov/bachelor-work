@@ -15,10 +15,10 @@
       <div class="nav-wrapper teal lighten-1">
         <a href="#" class="brand-logo">SFace</a>
         <ul class="right hide-on-med-and-down">
-          <li><a href="/image">Image</a></li>
+          <!--<li><a href="/image">Image</a></li>-->
           <li><a href="/video">Video</a></li>
           <li><a href="/settings">Settings</a></li>
-          <li><a>Logout</a></li>
+          <li><a href="/logout">Logout</a></li>
         </ul>
       </div>
       <div class="nav-content">
@@ -26,11 +26,97 @@
           <li class="tab"><a class="active" href="#update_recognizer">Update Recognizer</a></li>
           <li class="tab"><a href="#new_person">New Person</a></li>
           <li class="tab"><a href="#new_camera">New Camera</a></li>
-          <li class="tab"><a href="#all_cameras">All Cameras</a></li>
-          <li class="tab"><a href="#all_person">All Person</a></li>
+          <li class="tab"><a href="#all_cameras">Cameras</a></li>
+          <li class="tab"><a href="#all_person">Humans</a></li>
         </ul>
       </div>
     </nav>
+
+    <div id="update-camera-popup" class="modal modal-fixed-footer">
+      <form class="col s12" method="post" enctype="application/json" action="/settings/updateCamera">
+        <div class="modal-content">
+          <h4>Camera</h4>
+            <div class="row">
+              <div class="input-field col s12">
+                <input id="camera_object_id_popup" name="objectId" type="text" class="validate" readonly="readonly"/>
+                <label for="camera_object_id_popup" class="active">Object ID</label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="input-field col s6">
+                <input id="camera_name_popup" name="name" type="text" class="validate"/>
+                <label for="camera_name_popup">Name</label>
+              </div>
+              <div class="input-field col s6">
+                <input id="camera_address_popup" name="address" type="text" class="validate"/>
+                <label for="camera_address_popup">Address</label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="input-field col s6">
+                <input id="camera_success_call_popup" type="text"/>
+                <label for="camera_success_call_popup">Success call</label>
+              </div>
+              <div class="input-field col s6">
+                <input id="camera_error_call_popup" type="text"/>
+                <label for="camera_error_call_popup">Error call</label>
+              </div>
+            </div>
+            <div class="row">
+              <div class="input-field col s12">
+                <input id="camera_description_popup" name="description" type="text" class="validate"/>
+                <label for="camera_description_popup">Description</label>
+              </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+          <a class="modal-action modal-close waves-effect waves-green btn-flat" onclick="closeUpdateCameraPopup()">Cancel</a>
+          <button class="modal-action modal-close waves-effect waves-green btn-flat" type="submit" name="upload">Update</button>
+        </div>
+      </form>
+    </div>
+
+    <div id="update-human-popup" class="modal modal-fixed-footer">
+      <form class="col s12" method="post" enctype="application/json" action="/settings/updatePerson">
+        <div class="modal-content">
+          <h4>Human</h4>
+          <div class="row">
+            <div class="input-field col s6">
+              <input id="human_object_id_popup" name="objectId" type="text" class="validate" readonly="readonly"/>
+              <label for="human_object_id_popup" class="active">Object ID</label>
+            </div>
+            <div class="input-field col s6">
+              <input id="human_id_popup" name="humanId" type="number" class="validate" readonly="readonly"/>
+              <label for="human_id_popup" class="active">Human Id</label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="input-field col s6">
+              <input id="first_name_popup" name="firstName" type="text" class="validate"/>
+              <label for="first_name_popup" class="active">First Name</label>
+            </div>
+            <div class="input-field col s6">
+              <input id="last_name_popup" name="lastName" type="text" class="validate"/>
+              <label for="last_name_popup" class="active">Last Name</label>
+            </div>
+          </div>
+          <div class="row">
+            <div class="input-field col s6">
+              <input id="email_popup" name="email" type="email" class="validate"/>
+              <label for="email_popup" class="active">Email</label>
+            </div>
+            <div class="input-field col s6">
+              <input id="phone_popup" name="phone" type="text"/>
+              <label for="phone_popup" class="active">Phone</label>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <a class="modal-action modal-close waves-effect waves-green btn-flat" onclick="closeUpdateHumanPopup()">Cancel</a>
+          <button class="modal-action modal-close waves-effect waves-green btn-flat" type="submit" name="upload">Update</button>
+        </div>
+      </form>
+    </div>
 
     <div id="update_recognizer" class="col s12">
       <div class="upload_archive">
@@ -118,16 +204,21 @@
         <table id="list_cameras">
           <thead>
             <tr>
+              <th></th>
               <th>Id</th>
               <th>Name</th>
               <th>Address</th>
               <th>Description</th>
-              <th>Options</th>
             </tr>
           </thead>
           <tbody>
           </tbody>
         </table>
+        <div style="position: fixed; top: 92%; margin-left: 10px">
+          <a class="waves-effect waves-light btn add_button" onclick="stopCamera()">Stop</a>
+          <a class="waves-effect waves-light btn add_button" onclick="startCamera()">Start</a>
+          <a class="waves-effect waves-light btn add_button" onclick="removeCamera()">Remove</a>
+        </div>
       </div>
     </div>
 
@@ -136,6 +227,7 @@
         <table id="list_person">
           <thead>
           <tr>
+            <th></th>
             <th>Id</th>
             <th>First Name</th>
             <th>Last Name</th>
@@ -146,8 +238,12 @@
           <tbody>
           </tbody>
         </table>
+        <div style="position: fixed; top: 92%; margin-left: 10px">
+          <a class="waves-effect waves-light btn add_button" onclick="removePerson()">Remove</a>
+        </div>
       </div>
     </div>
+
   </div>
 </body>
 </html>

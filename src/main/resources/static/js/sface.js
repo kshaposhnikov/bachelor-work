@@ -5,8 +5,12 @@ var home = "";
 var activeCamera = null;
 var ws = null;
 
+var selectedCameras = null;
+var selectedHumans = null;
+
 $(document).ready(function() {
     $('select').material_select();
+    $('.modal').modal();
 });
 
 function getFaces(cameraId) {
@@ -31,7 +35,15 @@ function getFaces(cameraId) {
 }
 
 function closeNewCameraPopup() {
-    $('#new-camera-popup').hide();
+    $('#new-camera-popup').modal('close');
+}
+
+function closeUpdateCameraPopup() {
+    $('#update-camera-popup').modal('close');
+}
+
+function closeUpdateHumanPopup() {
+    $('#update-human-popup').modal('close');
 }
 
 function connectToCamera() {
@@ -78,7 +90,7 @@ function disconnectFromCamera() {
 }
 
 function showNewCameraPopup() {
-    $('#new-camera-popup').show();
+    $('#new-camera-popup').modal('open');
 
     $.ajax({
         type: "GET",
@@ -108,37 +120,124 @@ function getCameraDescriptionBySelectedCamera() {
     });
 }
 
-function startCamera(camId) {
-    // This Function dynamically inject to table with list of the cameras on Settings page
+function showUpdateCameraPopup(cameraId) {
+    $('#update-camera-popup').modal('open');
+
     $.ajax({
-        type: "POST",
-        url: home + "/settings/camera/start/",
+        type: "GET",
+        url: home + "/settings/getCamera",
         data: {
-            "cameraId" : camId
+            "cameraId" : cameraId
+        },
+        success: function (json) {
+            $('#camera_name_popup').val(json.name);
+            $('#camera_address_popup').val(json.address);
+            $('#camera_description_popup').val(json.description);
+            $('#camera_object_id_popup').val(json.objectId);
+            Materialize.updateTextFields();
         }
     });
 }
 
-function stopCamera(camId) {
+function showUpdateHumanPopup(humanId) {
     // This Function dynamically inject to table with list of the cameras on Settings page
+    $('#update-human-popup').modal('open');
+
     $.ajax({
-        type: "POST",
-        url: home + "/settings/camera/stop/",
+        type: "GET",
+        url: home + "/settings/getHuman",
         data: {
-            "cameraId" : camId
+            "humanId" : humanId
+        },
+        success: function (json) {
+            $('#first_name_popup').val(json.firstName);
+            $('#last_name_popup').val(json.lastName);
+            $('#email_popup').val(json.email);
+            $('#phone_popup').val(json.phone);
+            $('#human_object_id_popup').val(json.objectId);
+            $('#human_id_popup').val(json.humanId);
+            Materialize.updateTextFields();
         }
     });
 }
 
-function removePerson(personId) {
+function startCamera() {
+    for (var i = 0; i < selectedCameras.length; i++) {
+        $.ajax({
+            type: "POST",
+            url: home + "/settings/camera/start/",
+            data: {
+                "cameraId": selectedCameras[i]
+            }
+        });
+    }
+}
+
+function stopCamera() {
+    for (var i = 0; i < selectedCameras.length; i++) {
+        $.ajax({
+            type: "POST",
+            url: home + "/settings/camera/stop/",
+            data: {
+                "cameraId": selectedCameras[i]
+            }
+        });
+    }
+}
+
+function removePerson() {
+    for (var i = 0; i < selectedHumans.length; i++) {
+        $.ajax({
+            type: "POST",
+            url: home + "/settings/removePerson",
+            data: {
+                "personId": selectedHumans[i]
+            }
+        });
+    }
+}
+
+function removeCamera() {
+    for (var i = 0; i < selectedCameras.length; i++) {
+        $.ajax({
+            type: "POST",
+            url: home + "/settings/removeCamera",
+            data: {
+                "cameraId": selectedCameras[i]
+            }
+        });
+    }
+}
+
+function updateSelectedPersons(humanId) {
     // This Function dynamically inject to table with list of the cameras on Settings page
-    $.ajax({
-        type: "POST",
-        url: home + "/settings/removePerson",
-        data: {
-            "personId" : personId
+    if (selectedHumans == null) {
+        selectedHumans = [];
+    }
+    updateSelectedItems(selectedHumans, humanId);
+}
+
+function updateSelectedCameras(cameraId) {
+    // This Function dynamically inject to table with list of the cameras on Settings page
+    if (selectedCameras == null) {
+        selectedCameras = [];
+    }
+    updateSelectedItems(selectedCameras, cameraId)
+}
+
+function updateSelectedItems(list, element) {
+    var exists = -1;
+    for (var i = 0; i < list.length; i++) {
+        if (list[i] == element) {
+           exists = i;
         }
-    });
+    }
+
+    if (exists == -1) {
+        list.push(element);
+    } else {
+        list.splice(exists, 1);
+    }
 }
 
 function onLoadSettingsPage() {
@@ -154,6 +253,16 @@ function loadListCamerasForSettings() {
             $.each(json, function (i, camera) {
                 $("#list_cameras").find('tbody').append(
                     $('<tr>').append(
+                        $('<td>').append(
+                            $('<input>')
+                                .attr('id', 'camera_checkbox_' + camera.objectId)
+                                .attr('type', 'checkbox')
+                                .attr('onchange', 'updateSelectedCameras(\'' + camera.objectId + '\')')
+                        ).append(
+                            $('<label>')
+                                .attr('for', 'camera_checkbox_' + camera.objectId)
+                        )
+                    ).append(
                         $('<td>').text(camera.objectId)
                     ).append(
                         $('<td>').text(camera.name)
@@ -165,13 +274,8 @@ function loadListCamerasForSettings() {
                         $('<td>').append(
                             $('<a>')
                                 .attr('class', 'waves-effect waves-light btn add_button')
-                                .attr('onclick', 'startCamera(\''+ camera.objectId +'\')')
-                                .text('Start')
-                        ).append(
-                            $('<a>')
-                                .attr('class', 'waves-effect waves-light btn add_button')
-                                .attr('onclick', 'stopCamera(\''+ camera.objectId +'\')')
-                                .text('Stop')
+                                .attr('onclick', 'showUpdateCameraPopup(\''+ camera.objectId +'\')')
+                                .text('Update')
                         )
                     )
                 );
@@ -188,6 +292,16 @@ function loadListPersonForSettings() {
             $.each(json, function (i, person) {
                 $("#list_person").find('tbody').append(
                     $('<tr>').append(
+                        $('<td>').append(
+                            $('<input>')
+                                .attr('id', 'human_checkbox_' + person.objectId)
+                                .attr('type', 'checkbox')
+                                .attr('onchange', 'updateSelectedPersons(\'' + person.objectId + '\')')
+                        ).append(
+                            $('<label>')
+                                .attr('for', 'human_checkbox_' + person.objectId)
+                        )
+                    ).append(
                         $('<td>').text(person.humanId)
                     ).append(
                         $('<td>').text(person.firstName)
@@ -201,8 +315,8 @@ function loadListPersonForSettings() {
                         $('<td>').append(
                             $('<a>')
                                 .attr('class', 'waves-effect waves-light btn add_button')
-                                .attr('onclick', 'removePerson(\''+ person.objectId +'\')')
-                                .text('Remove')
+                                .attr('onclick', 'showUpdateHumanPopup(\''+ person.objectId +'\')')
+                                .text('Update')
                         )
                     )
                 );

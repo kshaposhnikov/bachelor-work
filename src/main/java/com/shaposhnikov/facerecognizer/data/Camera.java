@@ -30,6 +30,10 @@ public class Camera {
         return objectId;
     }
 
+    public void setObjectId(String objectId) {
+        this.objectId = objectId;
+    }
+
     public String getName() {
         return name;
     }

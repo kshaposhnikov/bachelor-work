@@ -13,7 +13,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
  */
 
 @Configuration
-@Order(SecurityProperties.ACCESS_OVERRIDE_ORDER)
 public class SFaceSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
@@ -22,8 +21,8 @@ public class SFaceSecurityConfig extends WebSecurityConfigurerAdapter {
                     .antMatchers("/settings")
                     .hasRole("ADMIN")
                     .anyRequest()
-                    //.authenticated()
-                    .permitAll()
+                    .authenticated()
+                    //.permitAll()
                 .and()
                     .formLogin()
                     .loginPage("/login")
