@@ -46,8 +46,8 @@ public class DetectAndRecognizeFaceCommand {
             Human human = null;
             if ("-1".equals(humanId)) {
                 human = new Human();
-                human.setFirstName("Ololosh");
-                human.setLastName("Ololoev");
+                human.setFirstName("Unknown");
+                human.setLastName("Human");
             } else {
                 human = humanRepository.findByHumanId(humanId);
             }

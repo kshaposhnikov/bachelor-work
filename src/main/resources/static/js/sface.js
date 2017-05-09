@@ -24,9 +24,13 @@ function getFaces(cameraId) {
             success: function (faceResponse) {
                 $("#face-list")
                     .append(
-                        "<div>" +
-                            "<img class=\"circle\" width=\"64\" height=\"64\" src=\"" + 'data:image/png;base64,' + faceResponse.face + "\"/>" +
-                            "<div style='float: right; margin-top: 10px;'>" + faceResponse.human.firstName + ' ' +  faceResponse.human.lastName + "</div>" +
+                        "<div style=\"position: relative; display: table-row;\">" +
+                            "<div style=\"width: 70px; float: left; margin-top: 5px;\">" +
+                                "<img class=\"circle\" width=\"64\" height=\"64\" src=\"" + 'data:image/png;base64,' + faceResponse.face + "\"/>" +
+                            "</div>" +
+                            "<div style=\"float: left; margin-top: 9px;\">" +
+                                "<p>" + faceResponse.human.firstName + ' ' +  faceResponse.human.lastName + "</p>" +
+                            "</div>" +
                         "</div>"
                     )
             }
