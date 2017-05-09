@@ -15,6 +15,9 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 @Configuration
 public class SFaceSecurityConfig extends WebSecurityConfigurerAdapter {
 
+    @Autowired
+    private SFaceDetailService detailService;
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
@@ -38,13 +41,6 @@ public class SFaceSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication()
-                    .withUser("user")
-                    .password("password")
-                    .roles("USER")
-                .and()
-                    .withUser("admin")
-                    .password("password")
-                    .roles("ADMIN", "USERS");
+        auth.userDetailsService(detailService);
     }
 }
