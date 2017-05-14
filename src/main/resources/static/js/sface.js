@@ -11,6 +11,12 @@ var selectedHumans = null;
 $(document).ready(function() {
     $('select').material_select();
     $('.modal').modal();
+
+    $("#page-number").keyup(function(event){
+        if(event.keyCode == 13){
+            getHistory($("#page-number").val());
+        }
+    });
 });
 
 function getFaces(cameraId) {
@@ -247,6 +253,8 @@ function updateSelectedItems(list, element) {
 function onLoadSettingsPage() {
     loadListCamerasForSettings();
     loadListPersonForSettings();
+    getPageCount();
+    getHistory(1);
 }
 
 function loadListCamerasForSettings() {
@@ -322,6 +330,52 @@ function loadListPersonForSettings() {
                                 .attr('onclick', 'showUpdateHumanPopup(\''+ person.objectId +'\')')
                                 .text('Update')
                         )
+                    )
+                );
+            });
+        }
+    });
+}
+
+function getPageCount() {
+    $.ajax({
+        type: "GET",
+        url: home + "/settings/getPageCount",
+        data: {
+          "size": 50
+        },
+        success: function (count) {
+            var label = "from " + count;
+            $("#page-count").text(label);
+            $("#page-number").attr("max", count).val(1);
+        }
+    });
+}
+
+function getHistory(pageNumber) {
+    $.ajax({
+        type: "GET",
+        url: home + "/settings/getHistory",
+        data: {
+            "page": pageNumber,
+            "size": 50
+        },
+        success: function (json) {
+            $("#history-body").empty();
+            $.each(json, function (i, history) {
+                $("#history").find('tbody').append(
+                    $('<tr>').append(
+                        $('<td>').text(new Date(history.visitDate).toUTCString())
+                    ).append(
+                        $('<td>').text(history.humanId)
+                    ).append(
+                        $('<td>').text(history.firstName)
+                    ).append(
+                        $('<td>').text(history.lastName)
+                    ).append(
+                        $('<td>').text(history.cameraId)
+                    ).append(
+                        $('<td>').text(history.cameraName)
                     )
                 );
             });

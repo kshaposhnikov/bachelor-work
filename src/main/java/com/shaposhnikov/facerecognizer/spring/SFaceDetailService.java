@@ -1,7 +1,7 @@
 package com.shaposhnikov.facerecognizer.spring;
 
 import com.shaposhnikov.facerecognizer.data.SFaceUser;
-import com.shaposhnikov.facerecognizer.data.UserRepository;
+import com.shaposhnikov.facerecognizer.data.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.GrantedAuthority;

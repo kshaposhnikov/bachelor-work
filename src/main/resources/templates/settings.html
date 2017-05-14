@@ -28,6 +28,7 @@
           <li class="tab"><a href="#new_camera">New Camera</a></li>
           <li class="tab"><a href="#all_cameras">Cameras</a></li>
           <li class="tab"><a href="#all_person">Humans</a></li>
+          <li class="tab"><a href="#history-container">History</a></li>
         </ul>
       </div>
     </nav>
@@ -166,14 +167,14 @@
 
     <div id="new_camera" class="col s12">
       <div class="row" style="margin-top: 10px">
-        <form class="col s12">
+        <form class="col s12" method="post" enctype="application/json" action="/settings/newCamera">
           <div class="row">
             <div class="input-field col s6">
-              <input id="camera_name" type="text" class="validate"/>
+              <input id="camera_name" type="text" name="name" class="validate"/>
               <label for="camera_name">Name</label>
             </div>
             <div class="input-field col s6">
-              <input id="camera_address" type="text" class="validate"/>
+              <input id="camera_address" type="text" name="address" class="validate"/>
               <label for="camera_address">Address</label>
             </div>
           </div>
@@ -189,19 +190,18 @@
           </div>
           <div class="row">
             <div class="input-field col s12">
-              <input id="camera_description" type="text" class="validate"/>
+              <input id="camera_description" name="description" type="text" class="validate"/>
               <label for="camera_description">Description</label>
             </div>
           </div>
+          <button class="btn waves-effect waves-light add_button" type="submit" name="addPerson">Add</button>
         </form>
       </div>
-      <a class="waves-effect waves-light btn add_button">Remove</a>
-      <a class="waves-effect waves-light btn add_button">Add</a>
     </div>
 
     <div id="all_cameras" class="col s12">
       <div class="row" style="margin-top: 10px">
-        <table id="list_cameras">
+        <table id="list_cameras" class="bordered highlight responsive-table">
           <thead>
             <tr>
               <th></th>
@@ -224,7 +224,7 @@
 
     <div id="all_person" class="col s12">
       <div class="row" style="margin-top: 10px">
-        <table id="list_person">
+        <table id="list_person" class="bordered highlight responsive-table">
           <thead>
           <tr>
             <th></th>
@@ -241,6 +241,30 @@
         <div style="position: fixed; top: 92%; margin-left: 10px">
           <a class="waves-effect waves-light btn add_button" onclick="removePerson()">Remove</a>
         </div>
+      </div>
+    </div>
+
+    <div id="history-container">
+      <div class="row" style="margin-top: 10px">
+        <table id="history" class="bordered highlight responsive-table">
+          <thead>
+          <tr>
+            <th>Date</th>
+            <th>Human Id</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Camera Id</th>
+            <th>Camera</th>
+          </tr>
+          </thead>
+          <tbody id="history-body">
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <label>Page</label>
+        <input id="page-number" name="pageNumber" type="number" min="1" class="validate" style="width: 3em; height: 1em; text-align: center"/>
+        <label id="page-count"></label>
       </div>
     </div>
 

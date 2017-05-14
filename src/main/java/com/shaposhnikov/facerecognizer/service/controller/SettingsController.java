@@ -6,6 +6,10 @@ import com.github.sarxos.webcam.ds.ipcam.IpCamDeviceRegistry;
 import com.github.sarxos.webcam.ds.ipcam.IpCamMode;
 import com.shaposhnikov.facerecognizer.command.TrainOpenCVRecognizerCommand;
 import com.shaposhnikov.facerecognizer.data.*;
+import com.shaposhnikov.facerecognizer.data.repository.CameraRepository;
+import com.shaposhnikov.facerecognizer.data.repository.FaceRepository;
+import com.shaposhnikov.facerecognizer.data.repository.HistoryRepository;
+import com.shaposhnikov.facerecognizer.data.repository.HumanRepository;
 import com.shaposhnikov.facerecognizer.recognizer.MongoBaseRecognizeContainer;
 import com.shaposhnikov.facerecognizer.service.RecognizeContext;
 import com.shaposhnikov.facerecognizer.spring.ApplicationContextProvider;
@@ -16,6 +20,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -52,6 +60,9 @@ public class SettingsController {
 
     @Autowired
     private FaceRepository faceRepository;
+
+    @Autowired
+    private HistoryRepository historyRepository;
 
     @Autowired
     @Qualifier("getGridFsTemplate")
@@ -126,7 +137,13 @@ public class SettingsController {
             String name = camera.getName();
             if ((cameraId.equals(name) || name.contains(cameraRepository.findOne(cameraId).getName()))
                     && !camera.isOpen()) {
-                camera.addWebcamListener(new SFaceWebcamListener(RecognizeContext.getDefaultForRemote(), humanRepository));
+                camera.addWebcamListener(new SFaceWebcamListener(
+                            RecognizeContext.getDefaultForRemote(),
+                            humanRepository,
+                            historyRepository,
+                            cameraRepository
+                        )
+                );
  //               camera.setViewSize(new Dimension(640, 480));
                 camera.open(true, (snapshotDuration, deviceFps) -> Math.max(100 - snapshotDuration, 0));
             }
@@ -198,5 +215,21 @@ public class SettingsController {
     public String addNewCamera(Camera camera) {
         cameraRepository.insert(camera);
         return "redirect:/settings#new_camera";
+    }
+
+    @RequestMapping(value = "/getPageCount", method = RequestMethod.GET)
+    public @ResponseBody String getPageCount(@RequestParam("size") int size) {
+        long count = historyRepository.count();
+        if (count <= size) {
+            return String.valueOf(1);
+        } else {
+            return String.valueOf(count % size);
+        }
+    }
+
+    @RequestMapping(value = "/getHistory", method = RequestMethod.GET)
+    public @ResponseBody List<History> getHistory(@RequestParam("page") int page, @RequestParam("size") int size) {
+        Page<History> all = historyRepository.findAll(new PageRequest(page - 1, size));
+        return all.getContent();
     }
 }

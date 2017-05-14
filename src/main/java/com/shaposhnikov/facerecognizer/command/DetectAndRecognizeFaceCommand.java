@@ -1,8 +1,11 @@
 package com.shaposhnikov.facerecognizer.command;
 
-import com.github.sarxos.webcam.util.ImageUtils;
+import com.shaposhnikov.facerecognizer.data.Camera;
+import com.shaposhnikov.facerecognizer.data.History;
 import com.shaposhnikov.facerecognizer.data.Human;
-import com.shaposhnikov.facerecognizer.data.HumanRepository;
+import com.shaposhnikov.facerecognizer.data.repository.CameraRepository;
+import com.shaposhnikov.facerecognizer.data.repository.HistoryRepository;
+import com.shaposhnikov.facerecognizer.data.repository.HumanRepository;
 import com.shaposhnikov.facerecognizer.service.RecognizeContext;
 import com.shaposhnikov.facerecognizer.service.RecognizedCacheController;
 import com.shaposhnikov.facerecognizer.service.response.FaceResponse;
@@ -14,29 +17,45 @@ import org.opencv.core.Rect;
 
 import java.awt.image.BufferedImage;
 import java.util.Collection;
+import java.util.Date;
 
 /**
  * Created by Kirill on 16.03.2017.
  */
 public class DetectAndRecognizeFaceCommand {
 
+    private static final long INTERVAL = 1000 * 7;
+
     private final DetectFaceCommand detectFaceCommand;
     private final RecognizeContext context;
     private final HumanRepository humanRepository;
+    private final HistoryRepository historyRepository;
+    private final CameraRepository cameraRepository;
 
-    public DetectAndRecognizeFaceCommand(RecognizeContext context, HumanRepository humanRepository) {
+    private long startTime;
+
+    public DetectAndRecognizeFaceCommand(RecognizeContext context,
+                                         HumanRepository humanRepository,
+                                         HistoryRepository historyRepository,
+                                         CameraRepository cameraRepository) {
         this.detectFaceCommand = new DetectFaceCommand(context);
         this.context = context;
         this.humanRepository = humanRepository;
+        this.historyRepository = historyRepository;
+        this.cameraRepository = cameraRepository;
+        this.startTime = System.currentTimeMillis();
     }
 
     public BufferedImage doWork(BufferedImage image, String cameraId) {
         Pair<Mat, Collection<Rect>> faces = detectFaceCommand.doWork(image);
         for (Rect face : faces.getValue()) {
             Mat submat = faces.getKey().submat(face);
-            new Thread(recognize(submat, cameraId)).run();
+
+            if (System.currentTimeMillis() - startTime > INTERVAL) {
+                startTime = System.currentTimeMillis();
+                new Thread(recognize(submat, cameraId)).run();
+            }
         }
-        //return ImageUtils.toByteArray(ImageConverter.matToBufferedImage(faces.getKey()), ImageUtils.FORMAT_PNG);
         return ImageConverter.matToBufferedImage(faces.getKey());
     }
 
@@ -52,15 +71,27 @@ public class DetectAndRecognizeFaceCommand {
                 human = humanRepository.findByHumanId(humanId);
             }
 
-            if (!RecognizedCacheController.containsFaceForCamera(cameraId, humanId)) {
-                RecognizedCacheController.add(
-                        cameraId,
-                        new FaceResponse(
-                                ImageHelper.resizeImage(ImageConverter.matToBufferedImage(image), 64, 64),
-                                human
-                        )
-                );
-            }
+            historyRepository.insert(buildHistoryRecord(human, humanId, cameraId));
+
+            RecognizedCacheController.add(
+                    cameraId,
+                    new FaceResponse(
+                            ImageHelper.resizeImage(ImageConverter.matToBufferedImage(image), 64, 64),
+                            human
+                    )
+            );
         };
+    }
+
+    private History buildHistoryRecord(Human human, String humanId, String cameraId) {
+        Camera camera = cameraRepository.findOne(cameraId);
+        History history = new History();
+        history.setFirstName(human.getFirstName());
+        history.setLastName(human.getLastName());
+        history.setHumanId(humanId);
+        history.setVisitDate(new Date(System.currentTimeMillis()));
+        history.setCameraId(cameraId);
+        history.setCameraName(camera.getName());
+        return history;
     }
 }

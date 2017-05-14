@@ -2,16 +2,12 @@ package com.shaposhnikov.facerecognizer.recognizer;
 
 import com.mongodb.gridfs.GridFSDBFile;
 import com.shaposhnikov.facerecognizer.data.Face;
-import com.shaposhnikov.facerecognizer.data.FaceRepository;
-import com.shaposhnikov.facerecognizer.data.Human;
-import com.shaposhnikov.facerecognizer.data.HumanRepository;
+import com.shaposhnikov.facerecognizer.data.repository.FaceRepository;
 import com.shaposhnikov.facerecognizer.util.ImageConverter;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfInt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Bean;
-import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.gridfs.GridFsCriteria;
 import org.springframework.data.mongodb.gridfs.GridFsTemplate;

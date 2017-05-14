@@ -5,11 +5,9 @@ package com.shaposhnikov.facerecognizer.service.controller;
 
 import com.github.sarxos.webcam.Webcam;
 import com.github.sarxos.webcam.util.ImageUtils;
-import com.shaposhnikov.facerecognizer.command.DetectAndRecognizeFaceCommand;
-import com.shaposhnikov.facerecognizer.command.OutputImageCommand;
 import com.shaposhnikov.facerecognizer.data.Camera;
-import com.shaposhnikov.facerecognizer.data.CameraRepository;
-import com.shaposhnikov.facerecognizer.data.HumanRepository;
+import com.shaposhnikov.facerecognizer.data.repository.CameraRepository;
+import com.shaposhnikov.facerecognizer.data.repository.HumanRepository;
 import com.shaposhnikov.facerecognizer.service.ContextCacheController;
 import com.shaposhnikov.facerecognizer.service.RecognizeContext;
 import com.shaposhnikov.facerecognizer.service.RecognizedCacheController;
@@ -20,9 +18,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.socket.config.annotation.ServletWebSocketHandlerRegistration;
-import org.springframework.web.socket.config.annotation.ServletWebSocketHandlerRegistry;
-import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;

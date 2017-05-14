@@ -4,7 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.sarxos.webcam.WebcamEvent;
 import com.github.sarxos.webcam.WebcamListener;
 import com.shaposhnikov.facerecognizer.command.DetectAndRecognizeFaceCommand;
-import com.shaposhnikov.facerecognizer.data.HumanRepository;
+import com.shaposhnikov.facerecognizer.data.repository.CameraRepository;
+import com.shaposhnikov.facerecognizer.data.repository.HistoryRepository;
+import com.shaposhnikov.facerecognizer.data.repository.HumanRepository;
 import com.shaposhnikov.facerecognizer.service.RecognizeContext;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -25,8 +27,8 @@ public class SFaceWebcamListener implements WebcamListener {
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
-    public SFaceWebcamListener(RecognizeContext context, HumanRepository repository) {
-        this.command = new DetectAndRecognizeFaceCommand(context, repository);
+    public SFaceWebcamListener(RecognizeContext context, HumanRepository repository, HistoryRepository historyRepository, CameraRepository cameraRepository) {
+        this.command = new DetectAndRecognizeFaceCommand(context, repository, historyRepository, cameraRepository);
     }
 
     @Override

@@ -1,5 +1,6 @@
-package com.shaposhnikov.facerecognizer.data;
+package com.shaposhnikov.facerecognizer.data.repository;
 
+import com.shaposhnikov.facerecognizer.data.Human;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 /**

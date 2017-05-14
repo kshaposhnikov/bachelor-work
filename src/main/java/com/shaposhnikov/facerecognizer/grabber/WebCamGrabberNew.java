@@ -1,8 +1,6 @@
 package com.shaposhnikov.facerecognizer.grabber;
 
 import com.github.sarxos.webcam.Webcam;
-import com.github.sarxos.webcam.ds.buildin.WebcamDefaultDevice;
-import com.shaposhnikov.facerecognizer.streamserver.SFaceWebcamListener;
 import com.shaposhnikov.facerecognizer.util.ImageConverter;
 import org.opencv.core.Mat;
 
