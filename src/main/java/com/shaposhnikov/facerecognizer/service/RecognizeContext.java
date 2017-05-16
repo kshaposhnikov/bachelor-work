@@ -1,17 +1,10 @@
 package com.shaposhnikov.facerecognizer.service;
 
-import com.shaposhnikov.facerecognizer.command.Command;
 import com.shaposhnikov.facerecognizer.detector.HaarFaceDetector;
 import com.shaposhnikov.facerecognizer.detector.IFaceDetector;
-import com.shaposhnikov.facerecognizer.grabber.IFrameGrabber;
-import com.shaposhnikov.facerecognizer.grabber.IpWebCamGrabber;
-import com.shaposhnikov.facerecognizer.grabber.WebCamGrabberNew;
 import com.shaposhnikov.facerecognizer.recognizer.FisherFaceRecognizer;
 import com.shaposhnikov.facerecognizer.recognizer.IOpenCVFaceRecognizer;
 import org.opencv.core.Mat;
-import org.springframework.context.annotation.Bean;
-
-import java.net.MalformedURLException;
 
 /**
  * Created by Kirill on 28.03.2017.
