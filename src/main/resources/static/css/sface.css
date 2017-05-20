@@ -37,20 +37,22 @@
 .recognized-list {
     float: right;
     width: 30%;
-    height: auto;
+    height: 85%;
+    overflow-y: scroll;
     display: inline-block;
     margin-top: 20px;
     margin-right: 10%;
 }
 
 #face-list {
-    border: 2px solid #CCCCCC;
-    border-right-color: #999999;
-    border-bottom-color: #999999;
-    height: 85%;
+    /*border: 2px solid #CCCCCC;*/
+    /*border-right-color: #999999;*/
+    /*border-bottom-color: #999999;*/
+    /*height: 85%;*/
     width: 100%;
-    overflow-y: scroll;
     padding: 5px;
+    border-spacing: 0px 10px;
+    display: table;
 }
 
 .select-camera {

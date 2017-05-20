@@ -37,6 +37,8 @@ function showUpdateCameraPopup(cameraId) {
             $('#camera_address_popup').val(json.address);
             $('#camera_description_popup').val(json.description);
             $('#camera_object_id_popup').val(json.objectId);
+            $('#camera_success_call_popup').val(json.successCall);
+            $('#camera_error_call_popup').val(json.erroneousCall);
             Materialize.updateTextFields();
         }
     });

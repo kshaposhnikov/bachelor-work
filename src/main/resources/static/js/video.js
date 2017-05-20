@@ -21,14 +21,14 @@ function getFaces(cameraId) {
             success: function (faceResponse) {
                 $("#face-list")
                     .append(
-                        "<div style=\"position: relative; display: table-row;\">" +
-                        "<div style=\"width: 70px; float: left; margin-top: 5px;\">" +
-                        "<img class=\"circle\" width=\"64\" height=\"64\" src=\"" + 'data:image/png;base64,' + faceResponse.face + "\"/>" +
-                        "</div>" +
-                        "<div style=\"float: left; margin-top: 9px;\">" +
-                        "<p>" + faceResponse.human.firstName + ' ' +  faceResponse.human.lastName + "</p>" +
-                        "</div>" +
-                        "</div>"
+                        "<span style=\"/* margin: 5px; *//* position: relative; */display: table-row;background-color: #4db6ac;box-shadow: 0 0 10px 0px rgba(0,0,0,0.5);/* padding: 10px; */height: 40px;\">" +
+                            "<div style=\"width: 70px; float: left; /*margin-top: 5px;*/ \">" +
+                                "<img class=\"circle\" width=\"64\" height=\"64\" src=\"" + 'data:image/png;base64,' + faceResponse.face + "\"/>" +
+                            "</div>" +
+                            "<div style=\"float: left; margin-top: 9px;\">" +
+                                "<p>" + faceResponse.human.firstName + " " +  faceResponse.human.lastName + "</p>" +
+                            "</div>" +
+                        "</span>"
                     )
             }
         });
