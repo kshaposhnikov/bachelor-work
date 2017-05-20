@@ -22,6 +22,12 @@ public class Camera {
     @Field("description")
     private String description;
 
+    @Field("successCall")
+    private String successCall;
+
+    @Field("erroneousCall")
+    private String erroneousCall;
+
     public Camera() {
         // Required for Spring
     }
@@ -52,6 +58,22 @@ public class Camera {
 
     public String getDescription() {
         return description;
+    }
+
+    public String getSuccessCall() {
+        return successCall;
+    }
+
+    public void setSuccessCall(String successCall) {
+        this.successCall = successCall;
+    }
+
+    public String getErroneousCall() {
+        return erroneousCall;
+    }
+
+    public void setErroneousCall(String erroneousCall) {
+        this.erroneousCall = erroneousCall;
     }
 
     public void setDescription(String description) {

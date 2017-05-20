@@ -14,6 +14,7 @@ import com.shaposhnikov.facerecognizer.util.ImageHelper;
 import org.apache.commons.lang3.tuple.Pair;
 import org.opencv.core.Mat;
 import org.opencv.core.Rect;
+import org.springframework.web.client.RestTemplate;
 
 import java.awt.image.BufferedImage;
 import java.util.Collection;
@@ -31,6 +32,7 @@ public class DetectAndRecognizeFaceCommand {
     private final HumanRepository humanRepository;
     private final HistoryRepository historyRepository;
     private final CameraRepository cameraRepository;
+    private final RestTemplate restTemplate;
 
     private long startTime;
 
@@ -43,6 +45,7 @@ public class DetectAndRecognizeFaceCommand {
         this.humanRepository = humanRepository;
         this.historyRepository = historyRepository;
         this.cameraRepository = cameraRepository;
+        this.restTemplate = new RestTemplate();
         this.startTime = System.currentTimeMillis();
     }
 
@@ -62,16 +65,19 @@ public class DetectAndRecognizeFaceCommand {
     private Runnable recognize(final Mat image, final String cameraId) {
         return () -> {
             String humanId = context.getRecognizer().recognize(image);
-            Human human = null;
+            Camera camera = cameraRepository.findOne(cameraId);
+            Human human;
             if ("-1".equals(humanId)) {
                 human = new Human();
                 human.setFirstName("Unknown");
                 human.setLastName("Human");
+                restTemplate.postForLocation(camera.getErroneousCall() + cameraId, null);
             } else {
                 human = humanRepository.findByHumanId(humanId);
+                restTemplate.postForLocation(camera.getSuccessCall() + humanId, null);
             }
 
-            historyRepository.insert(buildHistoryRecord(human, humanId, cameraId));
+            historyRepository.insert(buildHistoryRecord(human, camera));
 
             RecognizedCacheController.add(
                     cameraId,
@@ -83,14 +89,13 @@ public class DetectAndRecognizeFaceCommand {
         };
     }
 
-    private History buildHistoryRecord(Human human, String humanId, String cameraId) {
-        Camera camera = cameraRepository.findOne(cameraId);
+    private History buildHistoryRecord(Human human, Camera camera) {
         History history = new History();
         history.setFirstName(human.getFirstName());
         history.setLastName(human.getLastName());
-        history.setHumanId(humanId);
+        history.setHumanId(human.getHumanId());
         history.setVisitDate(new Date(System.currentTimeMillis()));
-        history.setCameraId(cameraId);
+        history.setCameraId(camera.getObjectId());
         history.setCameraName(camera.getName());
         return history;
     }
