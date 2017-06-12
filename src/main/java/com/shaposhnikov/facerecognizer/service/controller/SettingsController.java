@@ -145,6 +145,8 @@ public class SettingsController {
                         )
                 );
  //               camera.setViewSize(new Dimension(640, 480));
+                logger.info("Try to open camera {} with resolution {}",
+                        ((IpCamDevice) camera.getDevice()).getURL(), camera.getDevice().getResolution());
                 camera.open(true, (snapshotDuration, deviceFps) -> Math.max(100 - snapshotDuration, 0));
             }
         });

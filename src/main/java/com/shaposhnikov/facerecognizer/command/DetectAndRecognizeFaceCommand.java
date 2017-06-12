@@ -14,6 +14,8 @@ import com.shaposhnikov.facerecognizer.util.ImageHelper;
 import org.apache.commons.lang3.tuple.Pair;
 import org.opencv.core.Mat;
 import org.opencv.core.Rect;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.client.RestTemplate;
 
 import java.awt.image.BufferedImage;
@@ -24,6 +26,8 @@ import java.util.Date;
  * Created by Kirill on 16.03.2017.
  */
 public class DetectAndRecognizeFaceCommand {
+
+    private final static Logger LOGGER = LoggerFactory.getLogger(DetectAndRecognizeFaceCommand.class);
 
     private static final long INTERVAL = 1000 * 7;
 
@@ -71,10 +75,10 @@ public class DetectAndRecognizeFaceCommand {
                 human = new Human();
                 human.setFirstName("Unknown");
                 human.setLastName("Human");
-                restTemplate.postForLocation(camera.getErroneousCall() + cameraId, null);
+                postHttpMessage(camera.getErroneousCall() + cameraId);
             } else {
                 human = humanRepository.findByHumanId(humanId);
-                restTemplate.postForLocation(camera.getSuccessCall() + humanId, null);
+                postHttpMessage(camera.getSuccessCall() + humanId);
             }
 
             historyRepository.insert(buildHistoryRecord(human, camera));
@@ -87,6 +91,14 @@ public class DetectAndRecognizeFaceCommand {
                     )
             );
         };
+    }
+
+    private void postHttpMessage(String address) {
+        try {
+            restTemplate.postForLocation(address, null);
+        } catch (Exception e) {
+            LOGGER.error("Couldn't send http request on address " + address, e);
+        }
     }
 
     private History buildHistoryRecord(Human human, Camera camera) {

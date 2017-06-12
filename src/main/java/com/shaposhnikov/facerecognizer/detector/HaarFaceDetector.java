@@ -1,6 +1,7 @@
 package com.shaposhnikov.facerecognizer.detector;
 
 import com.shaposhnikov.facerecognizer.util.ImageHelper;
+import com.shaposhnikov.facerecognizer.util.PropertiesRepository;
 import org.opencv.core.*;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
@@ -74,12 +75,6 @@ public class HaarFaceDetector implements IFaceDetector<Mat> {
     }
 
     private static String getPathToCascade() {
-        String filePath = HaarFaceDetector.class.getResource("haarcascade_frontalface_alt.xml").getFile();
-        if (System.getProperty("os.name").toLowerCase().contains("win")) {
-            filePath = filePath.replaceFirst("[/]", "");
-            return filePath.replace("/", "\\");
-        } else {
-            return filePath;
-        }
+        return PropertiesRepository.getInstance().getValue("sface-properties", "sface.detector.cascade.path");
     }
 }

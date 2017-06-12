@@ -4,6 +4,7 @@ import com.shaposhnikov.facerecognizer.detector.HaarFaceDetector;
 import com.shaposhnikov.facerecognizer.detector.IFaceDetector;
 import com.shaposhnikov.facerecognizer.recognizer.FisherFaceRecognizer;
 import com.shaposhnikov.facerecognizer.recognizer.IOpenCVFaceRecognizer;
+import com.shaposhnikov.facerecognizer.util.PropertiesRepository;
 import org.opencv.core.Mat;
 
 /**
@@ -30,7 +31,7 @@ public class RecognizeContext {
     public static RecognizeContext getDefault() {
         return new RecognizeContext(
                 new HaarFaceDetector(),
-                new FisherFaceRecognizer("C:/tmp/result/resultFisher.yml")
+                new FisherFaceRecognizer(PropertiesRepository.getInstance().getValue("sface-properties", "sface.recognizer.config.path"))
         );
     }
 }

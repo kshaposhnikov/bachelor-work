@@ -33,20 +33,14 @@ public class NativeLoader {
 
     public void load(String name) {
         if (!isLibraryLoaded(this.getClass().getClassLoader(), name)) {
-            try {
-                Properties properties = new Properties();
-                properties.load(getClass().getResourceAsStream("config.properties"));
+            Properties properties = PropertiesRepository.getInstance().getProperties("sface-properties");
 
-                System.load(properties.getProperty(buildPathProperty()) +
-                        name +
-                        properties.getProperty(buildExtenstionProperty())
-                );
+            System.load(properties.getProperty(buildPathProperty()) +
+                    name +
+                    properties.getProperty(buildExtenstionProperty())
+            );
 
-                LOGGER.debug("Library {} loaded successfully", name);
-            } catch (IOException e) {
-                LOGGER.error("Couldn't open static \"config.properties\"", e);
-                throw new RuntimeException("Couldn't open static \"config.properties\"", e);
-            }
+            LOGGER.debug("Library {} loaded successfully", name);
         }
     }
 
