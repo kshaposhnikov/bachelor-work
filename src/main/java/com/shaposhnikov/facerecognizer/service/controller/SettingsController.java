@@ -138,7 +138,7 @@ public class SettingsController {
             if ((cameraId.equals(name) || name.contains(cameraRepository.findOne(cameraId).getName()))
                     && !camera.isOpen()) {
                 camera.addWebcamListener(new SFaceWebcamListener(
-                            RecognizeContext.getDefaultForRemote(),
+                            RecognizeContext.getDefault(),
                             humanRepository,
                             historyRepository,
                             cameraRepository
@@ -222,8 +222,10 @@ public class SettingsController {
         long count = historyRepository.count();
         if (count <= size) {
             return String.valueOf(1);
+        } else if (count % size == 0) {
+            return String.valueOf(count / size);
         } else {
-            return String.valueOf(count % size);
+            return String.valueOf((int)(count / size) + 1);
         }
     }
 
