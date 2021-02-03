@@ -60,7 +60,7 @@ public class DetectAndRecognizeFaceCommand {
 
             if (System.currentTimeMillis() - startTime > INTERVAL) {
                 startTime = System.currentTimeMillis();
-                new Thread(recognize(submat, cameraId)).run();
+                new Thread(recognize(submat, cameraId)).start();
             }
         }
         return ImageConverter.matToBufferedImage(faces.getKey());
@@ -69,27 +69,28 @@ public class DetectAndRecognizeFaceCommand {
     private Runnable recognize(final Mat image, final String cameraId) {
         return () -> {
             String humanId = context.getRecognizer().recognize(image);
-            Camera camera = cameraRepository.findOne(cameraId);
-            Human human;
-            if ("-1".equals(humanId)) {
-                human = new Human();
-                human.setFirstName("Unknown");
-                human.setLastName("Human");
-                postHttpMessage(camera.getErroneousCall() + cameraId);
-            } else {
-                human = humanRepository.findByHumanId(humanId);
-                postHttpMessage(camera.getSuccessCall() + humanId);
-            }
+            cameraRepository.findById(cameraId).ifPresent(camera -> {
+                Human human;
+                if ("-1".equals(humanId)) {
+                    human = new Human();
+                    human.setFirstName("Unknown");
+                    human.setLastName("Human");
+                    postHttpMessage(camera.getErroneousCall() + cameraId);
+                } else {
+                    human = humanRepository.findByHumanId(humanId);
+                    postHttpMessage(camera.getSuccessCall() + humanId);
+                }
 
-            historyRepository.insert(buildHistoryRecord(human, camera));
+                historyRepository.insert(buildHistoryRecord(human, camera));
 
-            RecognizedCacheController.add(
-                    cameraId,
-                    new FaceResponse(
-                            ImageHelper.resizeImage(ImageConverter.matToBufferedImage(image), 64, 64),
-                            human
-                    )
-            );
+                RecognizedCacheController.add(
+                        cameraId,
+                        new FaceResponse(
+                                ImageHelper.resizeImage(ImageConverter.matToBufferedImage(image), 64, 64),
+                                human
+                        )
+                );
+            });
         };
     }
 

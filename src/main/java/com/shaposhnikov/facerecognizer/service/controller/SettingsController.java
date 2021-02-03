@@ -35,6 +35,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.util.List;
+import java.util.Optional;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
@@ -133,33 +134,37 @@ public class SettingsController {
                 }
             });
         }
-        Webcam.getWebcams().forEach(camera -> {
-            String name = camera.getName();
-            if ((cameraId.equals(name) || name.contains(cameraRepository.findOne(cameraId).getName()))
-                    && !camera.isOpen()) {
-                camera.addWebcamListener(new SFaceWebcamListener(
-                            RecognizeContext.getDefault(),
-                            humanRepository,
-                            historyRepository,
-                            cameraRepository
-                        )
-                );
- //               camera.setViewSize(new Dimension(640, 480));
-                logger.info("Try to open camera {} with resolution {}",
-                        ((IpCamDevice) camera.getDevice()).getURL(), camera.getDevice().getResolution());
-                camera.open(true, (snapshotDuration, deviceFps) -> Math.max(100 - snapshotDuration, 0));
-            }
+        Webcam.getWebcams().forEach(device -> {
+            String deviceName = device.getName();
+            cameraRepository.findById(cameraId).ifPresent(registeredCamera -> {
+                if ((cameraId.equals(deviceName) || deviceName.contains(registeredCamera.getName()))
+                        && !device.isOpen()) {
+                    device.addWebcamListener(new SFaceWebcamListener(
+                                    RecognizeContext.getDefault(),
+                                    humanRepository,
+                                    historyRepository,
+                                    cameraRepository
+                            )
+                    );
+                    //               device.setViewSize(new Dimension(640, 480));
+                    logger.info("Try to open device {} with resolution {}",
+                            ((IpCamDevice) device.getDevice()).getURL(), device.getDevice().getResolution());
+                    device.open(true, (snapshotDuration, deviceFps) -> Math.max(100 - snapshotDuration, 0));
+                }
+            });
+
         });
         //return "redirect:/settings";
     }
 
     @RequestMapping(value = "/camera/stop", method = RequestMethod.POST)
     public @ResponseBody void stopCamera(@RequestParam("cameraId") final String cameraId) {
-        Webcam.getWebcams().forEach(webcam -> {
-            if (cameraId.equals(webcam.getName())
-                    || webcam.getName().contains(cameraRepository.findOne(cameraId).getName())) {
-                webcam.close();
-            }
+        Webcam.getWebcams().forEach(device -> {
+            cameraRepository.findById(cameraId).ifPresent(camera -> {
+                if (cameraId.equals(device.getName()) || device.getName().contains(camera.getName())) {
+                    device.close();
+                }
+            });
         });
     }
 
@@ -170,7 +175,11 @@ public class SettingsController {
 
     @RequestMapping(value = "/getCamera", method = RequestMethod.GET)
     public @ResponseBody Camera getCamera(@RequestParam String cameraId) {
-        return cameraRepository.findOne(cameraId);
+        Optional<Camera> camera = cameraRepository.findById(cameraId);
+        if (camera.isPresent()) {
+            return camera.get();
+        }
+        throw new RuntimeException("Camera [" + cameraId + "] not found");
     }
 
     @RequestMapping(value = "/updateCamera", method = RequestMethod.POST)
@@ -181,7 +190,7 @@ public class SettingsController {
 
     @RequestMapping(value = "/removeCamera", method = RequestMethod.POST)
     public String removeCamera(String cameraId) {
-        cameraRepository.delete(cameraId);
+        cameraRepository.deleteById(cameraId);
         return "redirect:/settings#all_cameras";
     }
 
@@ -192,7 +201,11 @@ public class SettingsController {
 
     @RequestMapping(value = "/getHuman", method = RequestMethod.GET)
     public @ResponseBody Human getHuman(@RequestParam String humanId) {
-        return humanRepository.findOne(humanId);
+        Optional<Human> human = humanRepository.findById(humanId);
+        if (human.isPresent()) {
+            return human.get();
+        }
+        throw new RuntimeException("Human [" + humanId + "] not found");
     }
 
     @RequestMapping(value = "/newPerson", method = RequestMethod.POST)
@@ -209,7 +222,7 @@ public class SettingsController {
 
     @RequestMapping(value = "/removePerson", method = RequestMethod.POST)
     public String removeHuman(@RequestParam("personId") String personId) {
-        humanRepository.delete(personId);
+        humanRepository.deleteById(personId);
         return "redirect:/settings#all_person";
     }
 

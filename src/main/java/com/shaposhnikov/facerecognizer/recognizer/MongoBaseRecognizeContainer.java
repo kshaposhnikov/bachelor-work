@@ -1,5 +1,6 @@
 package com.shaposhnikov.facerecognizer.recognizer;
 
+import com.mongodb.client.gridfs.model.GridFSFile;
 import com.mongodb.gridfs.GridFSDBFile;
 import com.shaposhnikov.facerecognizer.data.Face;
 import com.shaposhnikov.facerecognizer.data.repository.FaceRepository;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.gridfs.GridFsCriteria;
+import org.springframework.data.mongodb.gridfs.GridFsOperations;
 import org.springframework.data.mongodb.gridfs.GridFsTemplate;
 import org.springframework.stereotype.Component;
 
@@ -25,7 +27,7 @@ import java.util.List;
 @Component
 public class MongoBaseRecognizeContainer implements OpenCVRecognizeContainer {
 
-    private final GridFsTemplate template;
+    private final GridFsOperations fsOperations;
     private final FaceRepository faceRepository;
     private final String pathToResult;
 
@@ -42,23 +44,19 @@ public class MongoBaseRecognizeContainer implements OpenCVRecognizeContainer {
     }
 
     public MongoBaseRecognizeContainer(FaceRepository faceRepository,
-                                       GridFsTemplate template,
+                                       GridFsTemplate fsOperations,
                                        String pathToResult) {
         this.pathToResult = pathToResult;
         this.faceRepository = faceRepository;
-        this.template = template;
+        this.fsOperations = fsOperations;
     }
 
     @Override
     public void load() {
         for (Face face : faceRepository.findAll()) {
-            labels.add(new Integer(face.getHumanId()));
-            Query query = Query.query(
-                    GridFsCriteria.whereFilename().is(face.getFileName())
-            );
-            GridFSDBFile gridFSDBFile = template.findOne(query);
+            labels.add(Integer.valueOf(face.getHumanId()));
             try {
-                imagesToTrain.add(ImageConverter.bufferedImageToMat(ImageIO.read(gridFSDBFile.getInputStream())));
+                imagesToTrain.add(ImageConverter.bufferedImageToMat(ImageIO.read(fsOperations.getResource(face.getFileName()).getInputStream())));
             } catch (IOException e) {
                 throw new RuntimeException("Couldn't read image from Mongo DB Grid FS with name " + face.getHumanId(), e);
             }

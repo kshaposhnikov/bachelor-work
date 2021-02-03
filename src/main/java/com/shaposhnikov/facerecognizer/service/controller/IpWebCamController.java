@@ -27,6 +27,7 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.Optional;
 
 //import org.slf4j.Logger;
 //import org.slf4j.LoggerFactory;
@@ -104,14 +105,18 @@ public class IpWebCamController {
 
     @RequestMapping(value = "/getCamera", method = RequestMethod.GET)
     public @ResponseBody CameraResponse getCamera(@RequestParam(name = "camId") String cameraId) {
-        Camera camera = cameraRepository.findOne(cameraId);
-        return new CameraResponse(camera.getObjectId(), camera.getName(), camera.getDescription());
+        Optional<Camera> optionalCamera = cameraRepository.findById(cameraId);
+        if (optionalCamera.isPresent()) {
+            Camera camera = optionalCamera.get();
+            return new CameraResponse(camera.getObjectId(), camera.getName(), camera.getDescription());
+        }
+        throw new RuntimeException();
     }
 
     @RequestMapping(value = "/activate", method = RequestMethod.POST)
     public void activateCamera(@RequestParam(name = "camId") String cameraId) throws MalformedURLException {
         synchronized (lock) {
-            Camera camera = cameraRepository.findOne(cameraId);
+            Camera camera = cameraRepository.findById(cameraId).get();
             if (!ContextCacheController.containsCam(cameraId)) {
                 if (DEFAULE_WEBCAM.equals(camera.getObjectId())) {
                     ContextCacheController.put(cameraId, RecognizeContext.getDefault());
