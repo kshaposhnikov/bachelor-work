@@ -1,10 +1,7 @@
 package com.shaposhnikov.facerecognizer.command;
 
-import com.shaposhnikov.facerecognizer.detector.IFaceDetector;
 import com.shaposhnikov.facerecognizer.service.RecognizeContext;
-import com.shaposhnikov.facerecognizer.updater.Updater;
 import com.shaposhnikov.facerecognizer.util.ImageConverter;
-import javafx.scene.image.Image;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.opencv.core.Mat;
@@ -15,7 +12,6 @@ import org.opencv.imgproc.Imgproc;
 
 import java.awt.image.BufferedImage;
 import java.util.Collection;
-import java.util.Map;
 
 /**
  * Created by Kirill on 13.03.2017.
